@@ -1,0 +1,18 @@
+package tagger;
+
+/*
+ * Contains the text parser.
+ */
+
+public class TextParser
+{
+    // constructor
+    public TextParser()
+    {
+    }
+    
+    public static   parse(String text)
+    {
+    }
+
+}

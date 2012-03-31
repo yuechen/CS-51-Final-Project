@@ -1,0 +1,16 @@
+package tagger;
+
+/*
+ * Contains the HMM and Viterbi.
+ */
+
+public class Viterbi
+{
+    // constructor
+    public Viterbi()
+    {
+    }
+    
+
+
+}
