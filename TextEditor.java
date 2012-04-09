@@ -1,18 +1,25 @@
 package tagger;
 
-/*
- * Contains the main text editor.
+/**
+ * Contains the main text editor which handles user input.
  */
 
 public class TextEditor 
 {
-    // constructor
+    /**
+	 * Constructs the text editor object which persists until
+	 * the program is closed by the user.
+	 * @return none
+	 */
     public TextEditor()
     {
     }
     
-    // initializes text editor -- maybe fold into constructor?
-    public static void init()
+    /** 
+     * Initializes the components and GUI of the text editor.
+	 * @return none
+	 */
+	public static void init()
     {
     }
 
