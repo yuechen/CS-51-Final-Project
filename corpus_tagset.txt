@@ -1,0 +1,226 @@
+(	opening parenthesis
+)	closing parenthesis
+*	negator
+,	comma
+--	dash
+.	sentence terminator
+:	colon
+ABL	determiner/pronoun, pre-qualifier
+ABN	determiner/pronoun, pre-quantifier
+ABX	determiner/pronoun, double conjunction or pre-quantifier
+AP	determiner/pronoun, post-determiner
+AP$	determiner/pronoun, post-determiner, genitive
+AP+AP	determiner/pronoun, post-determiner, hyphenated pair
+AT	article
+BE	verb "to be", infinitive or imperative
+BED	verb "to be", past tense, 2nd person singular or all persons plural
+BED*	verb "to be", past tense, 2nd person singular or all persons plural, negated
+BEDZ	verb "to be", past tense, 1st and 3rd person singular
+BEDZ*	verb "to be", past tense, 1st and 3rd person singular, negated
+BEG	verb "to be", present participle or gerund
+BEM	verb "to be", present tense, 1st person singular
+BEM*	verb "to be", present tense, 1st person singular, negated
+BEN	verb "to be", past participle
+BER	verb "to be", present tense, 2nd person singular or all persons plural
+BER*	verb "to be", present tense, 2nd person singular or all persons plural, negated
+BEZ	verb "to be", present tense, 3rd person singular
+BEZ*	verb "to be", present tense, 3rd person singular, negated
+CC	conjunction, coordinating
+CD	numeral, cardinal
+CD$	numeral, cardinal, genitive
+CS	conjunction, subordinating
+DO	verb "to do", uninflected present tense, infinitive or imperative
+DO*	verb "to do", uninflected present tense or imperative, negated
+DO+PPSS	verb "to do", past or present tense + pronoun, personal, nominative, not 3rd person singular
+DOD	verb "to do", past tense
+DOD*	verb "to do", past tense, negated
+DOZ	verb "to do", present tense, 3rd person singular
+DOZ*	verb "to do", present tense, 3rd person singular, negated
+DT	determiner/pronoun, singular
+DT$	determiner/pronoun, singular, genitive
+DT+BEZ	determiner/pronoun + verb "to be", present tense, 3rd person singular
+DT+MD	determiner/pronoun + modal auxillary
+DTI	determiner/pronoun, singular or plural
+DTS	determiner/pronoun, plural
+DTS+BEZ	pronoun, plural + verb "to be", present tense, 3rd person singular
+DTX	determiner, pronoun or double conjunction
+EX	existential there
+EX+BEZ	existential there + verb "to be", present tense, 3rd person singular
+EX+HVD	existential there + verb "to have", past tense
+EX+HVZ	existential there + verb "to have", present tense, 3rd person singular
+EX+MD	existential there + modal auxillary
+FW-*	foreign word: negator
+FW-AT	foreign word: article
+FW-AT+NN	foreign word: article + noun, singular, common
+FW-AT+NP	foreign word: article + noun, singular, proper
+FW-BE	foreign word: verb "to be", infinitive or imperative
+FW-BER	foreign word: verb "to be", present tense, 2nd person singular or all persons plural
+FW-BEZ	foreign word: verb "to be", present tense, 3rd person singular
+FW-CC	foreign word: conjunction, coordinating
+FW-CD	foreign word: numeral, cardinal
+FW-CS	foreign word: conjunction, subordinating
+FW-DT	foreign word: determiner/pronoun, singular
+FW-DT+BEZ	foreign word: determiner + verb "to be", present tense, 3rd person singular
+FW-DTS	foreign word: determiner/pronoun, plural
+FW-HV	foreign word: verb "to have", present tense, not 3rd person singular
+FW-IN	foreign word: preposition
+FW-IN+AT	foreign word: preposition + article
+FW-IN+NN	foreign word: preposition + noun, singular, common
+FW-IN+NP	foreign word: preposition + noun, singular, proper
+FW-JJ	foreign word: adjective
+FW-JJR	foreign word: adjective, comparative
+FW-JJT	foreign word: adjective, superlative
+FW-NN	foreign word: noun, singular, common
+FW-NN$	foreign word: noun, singular, common, genitive
+FW-NNS	foreign word: noun, plural, common
+FW-NP	foreign word: noun, singular, proper
+FW-NPS	foreign word: noun, plural, proper
+FW-NR	foreign word: noun, singular, adverbial
+FW-OD	foreign word: numeral, ordinal
+FW-PN	foreign word: pronoun, nominal
+FW-PP$	foreign word: determiner, possessive
+FW-PPL	foreign word: pronoun, singular, reflexive
+FW-PPL+VBZ	foreign word: pronoun, singular, reflexive + verb, present tense, 3rd person singular
+FW-PPO	pronoun, personal, accusative
+FW-PPO+IN	foreign word: pronoun, personal, accusative + preposition
+FW-PPS	foreign word: pronoun, personal, nominative, 3rd person singular
+FW-PPSS	foreign word: pronoun, personal, nominative, not 3rd person singular
+FW-PPSS+HV	foreign word: pronoun, personal, nominative, not 3rd person singular + verb "to have", present tense, not 3rd person singular
+FW-QL	foreign word: qualifier
+FW-RB	foreign word: adverb
+FW-RB+CC	foreign word: adverb + conjunction, coordinating
+FW-TO+VB	foreign word: infinitival to + verb, infinitive
+FW-UH	foreign word: interjection
+FW-VB	foreign word: verb, present tense, not 3rd person singular, imperative or infinitive
+FW-VBD	foreign word: verb, past tense
+FW-VBG	foreign word: verb, present participle or gerund
+FW-VBN	foreign word: verb, past participle
+FW-VBZ	foreign word: verb, present tense, 3rd person singular
+FW-WDT	foreign word: WH-determiner
+FW-WPO	foreign word: WH-pronoun, accusative
+FW-WPS	foreign word: WH-pronoun, nominative
+HV	verb "to have", uninflected present tense, infinitive or imperative
+HV*	verb "to have", uninflected present tense or imperative, negated
+HV+TO	verb "to have", uninflected present tense + infinitival to
+HVD	verb "to have", past tense
+HVD*	verb "to have", past tense, negated
+HVG	verb "to have", present participle or gerund
+HVN	verb "to have", past participle
+HVZ	verb "to have", present tense, 3rd person singular
+HVZ*	verb "to have", present tense, 3rd person singular, negated
+IN	preposition
+IN+IN	preposition, hyphenated pair
+IN+PPO	preposition + pronoun, personal, accusative
+JJ	adjective
+JJ$	adjective, genitive
+JJ+JJ	adjective, hyphenated pair
+JJR	adjective, comparative
+JJR+CS	adjective + conjunction, coordinating
+JJS	adjective, semantically superlative
+JJT	adjective, superlative
+MD	modal auxillary
+MD*	modal auxillary, negated
+MD+HV	modal auxillary + verb "to have", uninflected form
+MD+PPSS	modal auxillary + pronoun, personal, nominative, not 3rd person singular
+MD+TO	modal auxillary + infinitival to
+NN	noun, singular, common
+NN$	noun, singular, common, genitive
+NN+BEZ	noun, singular, common + verb "to be", present tense, 3rd person singular
+NN+HVD	noun, singular, common + verb "to have", past tense
+NN+HVZ	noun, singular, common + verb "to have", present tense, 3rd person singular
+NN+IN	noun, singular, common + preposition
+NN+MD	noun, singular, common + modal auxillary
+NN+NN	noun, singular, common, hyphenated pair
+NNS	noun, plural, common
+NNS$	noun, plural, common, genitive
+NNS+MD	noun, plural, common + modal auxillary
+NP	noun, singular, proper
+NP$	noun, singular, proper, genitive
+NP+BEZ	noun, singular, proper + verb "to be", present tense, 3rd person singular
+NP+HVZ	noun, singular, proper + verb "to have", present tense, 3rd person singular
+NP+MD	noun, singular, proper + modal auxillary
+NPS	noun, plural, proper
+NPS$	noun, plural, proper, genitive
+NR	noun, singular, adverbial
+NR$	noun, singular, adverbial, genitive
+NR+MD	noun, singular, adverbial + modal auxillary
+NRS	noun, plural, adverbial
+OD	numeral, ordinal
+PN	pronoun, nominal
+PN$	pronoun, nominal, genitive
+PN+BEZ	pronoun, nominal + verb "to be", present tense, 3rd person singular
+PN+HVD	pronoun, nominal + verb "to have", past tense
+PN+HVZ	pronoun, nominal + verb "to have", present tense, 3rd person singular
+PN+MD	pronoun, nominal + modal auxillary
+PP$	determiner, possessive
+PP$$	pronoun, possessive
+PPL	pronoun, singular, reflexive
+PPLS	pronoun, plural, reflexive
+PPO	pronoun, personal, accusative
+PPS	pronoun, personal, nominative, 3rd person singular
+PPS+BEZ	pronoun, personal, nominative, 3rd person singular + verb "to be", present tense, 3rd person singular
+PPS+HVD	pronoun, personal, nominative, 3rd person singular + verb "to have", past tense
+PPS+HVZ	pronoun, personal, nominative, 3rd person singular + verb "to have", present tense, 3rd person singular
+PPS+MD	pronoun, personal, nominative, 3rd person singular + modal auxillary
+PPSS	pronoun, personal, nominative, not 3rd person singular
+PPSS+BEM	pronoun, personal, nominative, not 3rd person singular + verb "to be", present tense, 1st person singular
+PPSS+BER	pronoun, personal, nominative, not 3rd person singular + verb "to be", present tense, 2nd person singular or all persons plural
+PPSS+BEZ	pronoun, personal, nominative, not 3rd person singular + verb "to be", present tense, 3rd person singular
+PPSS+BEZ*	pronoun, personal, nominative, not 3rd person singular + verb "to be", present tense, 3rd person singular, negated
+PPSS+HV	pronoun, personal, nominative, not 3rd person singular + verb "to have", uninflected present tense
+PPSS+HVD	pronoun, personal, nominative, not 3rd person singular + verb "to have", past tense
+PPSS+MD	pronoun, personal, nominative, not 3rd person singular + modal auxillary
+PPSS+VB	pronoun, personal, nominative, not 3rd person singular + verb "to verb", uninflected present tense
+QL	qualifier, pre
+QLP	qualifier, post
+RB	adverb
+RB$	adverb, genitive
+RB+BEZ	adverb + verb "to be", present tense, 3rd person singular
+RB+CS	adverb + conjunction, coordinating
+RBR	adverb, comparative
+RBR+CS	adverb, comparative + conjunction, coordinating
+RBT	adverb, superlative
+RN	adverb, nominal
+RP	adverb, particle
+RP+IN	adverb, particle + preposition
+TO	infinitival to
+TO+VB	infinitival to + verb, infinitive
+UH	interjection
+VB	verb, base: uninflected present, imperative or infinitive
+VB+AT	verb, base: uninflected present or infinitive + article
+VB+IN	verb, base: uninflected present, imperative or infinitive + preposition
+VB+JJ	verb, base: uninflected present, imperative or infinitive + adjective
+VB+PPO	verb, uninflected present tense + pronoun, personal, accusative
+VB+RP	verb, imperative + adverbial particle
+VB+TO	verb, base: uninflected present, imperative or infinitive + infinitival to
+VB+VB	verb, base: uninflected present, imperative or infinitive; hypenated pair
+VBD	verb, past tense
+VBG	verb, present participle or gerund
+VBG+TO	verb, present participle + infinitival to
+VBN	verb, past participle
+VBN+TO	verb, past participle + infinitival to
+VBZ	verb, present tense, 3rd person singular
+WDT	WH-determiner
+WDT+BER	WH-determiner + verb "to be", present tense, 2nd person singular or all persons plural
+WDT+BER+PP	WH-determiner + verb "to be", present, 2nd person singular or all persons plural + pronoun, personal, nominative, not 3rd person singular
+WDT+BEZ	WH-determiner + verb "to be", present tense, 3rd person singular
+WDT+DO+PPS	WH-determiner + verb "to do", uninflected present tense + pronoun, personal, nominative, not 3rd person singular
+WDT+DOD	WH-determiner + verb "to do", past tense
+WDT+HVZ	WH-determiner + verb "to have", present tense, 3rd person singular
+WP$	WH-pronoun, genitive
+WPO	WH-pronoun, accusative
+WPS	WH-pronoun, nominative
+WPS+BEZ	WH-pronoun, nominative + verb "to be", present, 3rd person singular
+WPS+HVD	WH-pronoun, nominative + verb "to have", past tense
+WPS+HVZ	WH-pronoun, nominative + verb "to have", present tense, 3rd person singular
+WPS+MD	WH-pronoun, nominative + modal auxillary
+WQL	WH-qualifier
+WRB	WH-adverb
+WRB+BER	WH-adverb + verb "to be", present, 2nd person singular or all persons plural
+WRB+BEZ	WH-adverb + verb "to be", present, 3rd person singular
+WRB+DO	WH-adverb + verb "to do", present, not 3rd person singular
+WRB+DOD	WH-adverb + verb "to do", past tense
+WRB+DOD*	WH-adverb + verb "to do", past tense, negated
+WRB+DOZ	WH-adverb + verb "to do", present tense, 3rd person singular
+WRB+IN	WH-adverb + preposition
+WRB+MD	WH-adverb + modal auxillary
