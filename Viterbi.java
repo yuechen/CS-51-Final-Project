@@ -134,12 +134,26 @@ public class Viterbi
 	int[] posFrequencies = new int[numPos];
 
 	// read and load corpus file frequencies
+	File corpusDir = new File(corpusDirectory);
+	BufferedReader in;
+
+	for () //iterate over files in directory with String fileName
+	{
+	    in = new BufferedReader(new FileReader(fileName));
+		// deal with frequencies
+	}
+
+	BufferedWriter saveFile = new BufferedWriter(new FileWriter(saveDirectory));
 
 	// save training files and compute probabilities as saving
 
 	// write numPOS
+	saveFile.write(numPOS.toString());
+	saveFile.write(newLine());
 
 	// write numWords
+	saveFile.write(numWords.toString());
+	saveFile.write(newLine());
 	
 	// write words_to_pos log probabilities
 
