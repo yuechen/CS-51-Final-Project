@@ -1,11 +1,12 @@
 package tagger;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
- * Parts of speech class statically contains a list of the parts of speech so
- * far, and POS objects represent individual objects, each with a unique index for the
- * sake of manipulation.
+ * Parts of speech class statically contains a list of the parts of speech 
+ * objects, and POS objects represent individual parts of speech, each with a
+ * unique index, name, and symbol (as defined by the corpus tagset).
  */
 public class POS
 {
