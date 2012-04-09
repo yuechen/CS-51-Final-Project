@@ -7,7 +7,6 @@ import java.util.HashMap;
  * far, and POS objects represent individual objects, each with a unique index for the
  * sake of manipulation.
  */
- 
 public class POS
 {
     /** unique index for each part of speech */
@@ -32,7 +31,7 @@ public class POS
     /**
      * Adds a POS to the POS Dictionary.
      * @param symbol text literal representing POS, as defined by corpus
-     * @returns none
+     * @return none
      */
     public static void addPOS (String symbol)
     {
@@ -42,7 +41,7 @@ public class POS
     /**
      * Removes a POS from the POS Dictionary.
      * @param num POS index, representing a specific part of speech
-     * @returns none
+     * @return none
      */
     public static void removePOS (int num)
     {
@@ -91,7 +90,7 @@ public class POS
     /**
      * Gets the POS index of a part of speech, given its name, as defined by the corpus.
      * @param symbol text literal representing POS, as defined by corpus
-     * @returns integer index of that part of speech
+     * @return integer index of that part of speech
      */
     public static int getPOSIndex (String symbol)
     {
