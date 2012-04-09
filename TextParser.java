@@ -1,5 +1,7 @@
 package tagger;
 
+import java.util.LinkedList;
+
 /**
  * Contains the text parser.
  * <br> Splits a String block of text into a linked list of sentences
@@ -15,7 +17,7 @@ public class TextParser
 	/**
 	* <code>sentlist</code> Linked List holds resulting list of sentences.
 	*/
-	private sentlist = new java.util.LinkedList();
+	private LinkedList sentlist = new LinkedList();
 	
 	/**
 	* Constructor initializes input variable to an empty string and
@@ -34,8 +36,8 @@ public class TextParser
 	*/
 	public static List< Pair<String, POS> > parse(String text)
    {
-		input = text
-		String[] sentarray = input.split("[.!?]+\\s-(Mr//.|Mrs\\.|Ms\\.)")
+		input = text;
+		String[] sentarray = input.split("[.!?]+\\s-(Mr//.|Mrs\\.|Ms\\.)");
    }
 
 }

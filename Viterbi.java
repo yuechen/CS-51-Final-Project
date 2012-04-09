@@ -137,7 +137,7 @@ public class Viterbi
 	File corpusDir = new File(corpusDirectory);
 	BufferedReader in;
 
-	for () //iterate over files in directory with String fileName
+	for (int i = 0; i<5; i++) //iterate over files in directory with String fileName -- current insides only for compilation purposes
 	{
 	    in = new BufferedReader(new FileReader(fileName));
 		// deal with frequencies
