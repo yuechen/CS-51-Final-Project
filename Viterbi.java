@@ -17,9 +17,9 @@ import java.util.ArrayList;
  * each part of speech on its own line, each POS name exactly 1 "word"
  * long -- i.e. no spaces
  * <p>
- * Each corpus text file should be in the form <br>
- * 
- *
+ * Each corpus text file should be a compete English text, with each word
+ * tagged with a part of speech. It should conform to the format set by
+ * the Brown corpus, i.e. in the form [word]/[part of speech].
  * <p>
  * The training file will be printed in the form <br>
  * numPOS <br>
