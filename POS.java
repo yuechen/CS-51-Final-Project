@@ -41,7 +41,7 @@ public class POS
 	indexToPOS.add(this);
 	addPOS(symbol, name);
     }
-
+ 
     /**
      * Adds a POS to the POS Dictionary.
      * @param symbol text literal representing POS, as defined by corpus
