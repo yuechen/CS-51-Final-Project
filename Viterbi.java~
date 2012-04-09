@@ -115,7 +115,7 @@ public class Viterbi
 	 * as a hashmap of Strings to integer arrays.
 	 */ 
 	HashMap<String, int[]> word_to_pos = 
-	    new HashMap<String, int[numPOS]>();
+	    new HashMap<String, int[]>();
 
 	/* array of number of times parts of speech
 	 * appear consecutively; pos_to_pos[i][j]
