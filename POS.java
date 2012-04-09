@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class POS
 {
     /** unique index for each part of speech */
-    private int POSIndex;
+    private int index;
 
     /** symbol (in tagged corpus) of each part of speech */
     private String symbol;
@@ -19,7 +19,7 @@ public class POS
     private String name;
 
     /** hashMap of symbols to indices */
-    private static HashMap<String, Integer> nameToIndex = new HashMap<String, Integer>();
+    private static HashMap<String, Integer> symbolToIndex = new HashMap<String, Integer>();
 
     /** ArrayList of all the existing <code>POS</code> objects, indexed by the
      * indicies of the <code>POS</code> objects*/
@@ -34,12 +34,12 @@ public class POS
      */
     public POS (String symbol, String name)
     {
-	this.symbol = symbol;
-	this.name = name;
-	this.index = indexToPOS;
+		this.symbol = symbol;
+		this.name = name;
+		this.index = indexToPOS;
 
-	indexToPOS.add(this);
-	addPOS(symbol, name);
+		indexToPOS.add(this);
+		addPOS(symbol, name);
     }
  
     /**
@@ -58,7 +58,7 @@ public class POS
      * @param num POS index, representing a specific part of speech
      * @return none
      */
-    public static void removePOS (int num)
+    public static void removePOS (int index)
     {
 	
     }
@@ -69,7 +69,7 @@ public class POS
      */
     public int getIndex ()
     {
-	return POSIndex;
+		return index;
     }
 
     /**
@@ -78,7 +78,7 @@ public class POS
      */
     public int getSymbol ()
     {
-	return symbol;
+		return symbol;
     }
 
     /**
@@ -90,7 +90,7 @@ public class POS
     {
 	// compare symbols or indices?
 
-	return other.POSIndex == this.POSIndex;
+	return other.index == this.index;
     }
 
     /**
