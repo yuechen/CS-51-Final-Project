@@ -88,12 +88,21 @@ public class POS
     }
     
     /**
-     * Gets the POS index of a part of speech, given its name, as defined by the corpus.
-     * @param symbol text literal representing POS, as defined by corpus
+     * Gets the <code>POS</code> index of a part of speech, given its name, as defined by the corpus.
+     * <p> 
+     * If the part of speech is not found, throws an exception
+     * @param symbol text literal representing POSNotFoundException, as defined by corpus
      * @return integer index of that part of speech
      */
-    public static int getPOSIndex (String symbol)
+    public static int getPOSIndex (String symbol) throws POSNotFoundException
     {
 	
     }
+}
+
+/**
+ * An exception for when a part of speech is not found, such as when the user gives an incomplete list of parts of speech.
+ */
+class POSNotFoundException extends Exception
+{
 }
