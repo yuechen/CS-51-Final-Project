@@ -27,7 +27,7 @@ public class POS
     {
 	POSIndex = getPOSIndex (symbol);
     }
-
+ 
     /**
      * Adds a POS to the POS Dictionary.
      * @param symbol text literal representing POS, as defined by corpus

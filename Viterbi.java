@@ -14,8 +14,10 @@ import java.util.ArrayList;
  * and then the directory of the corpus. 
  * <p> 
  * The list of parts of speech should be in the form of having
- * each part of speech on its own line, each POS name exactly 1 "word"
- * long -- i.e. no spaces
+ * each part of speech on its own line, each POS symbol exactly 1 "word"
+ * long followed by a space and the real English english term for the POS
+ * such as <br>
+ * [POS symbol] [POS term] (e.g. nn Noun)
  * <p>
  * Each corpus text file should be a compete English text, with each word
  * tagged with a part of speech. It should conform to the format set by
