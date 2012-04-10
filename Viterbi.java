@@ -3,6 +3,7 @@ package tagger;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.io.File;
 
 /**
  * As a class, <code>Viterbi</code> contains both the HMM model 
@@ -72,23 +73,22 @@ public class Viterbi
     /**
      * Basic constructor
      */
-    private Viterbi()
+    private Viterbi(String tagset)
     {
-
     }
 
     /**
      * Constructor; initializes the probability table from the 
      * given saved training file. (See above for format of file.)
-     * @param posList the file containing a list of parts of speech
-     * @param file the saved file name of the data
+     * @param tagset the file containing a list of parts of speech
+     * @param datafile the name of the file of saved probability data
      * @return none
      */
-    public Viterbi(String posList, String file)
+    public Viterbi(String tagset, String datafile)
     {
 	this();
 	
-	POS.loadfromFile(posList);
+	POS.loadfromFile(tagset);
 
 	// initalizes the probability arrays
 
@@ -99,27 +99,34 @@ public class Viterbi
      * Iterates through the corpus and calculates the frequencies of
      * neighborings parts of speech and the frequences of each part
      * of speech for each word. 
-     * @param posList the file containing a list of parts of speech
-     * @param corpusDirectory the director of the file containing
+     * @param tagset the file containing the tagset, as defined in the class 
+     		  description.
+     * @param corpusDirectory the name of the directory containing
                               the corpus
      * @param saveLocation where the probabilities are to be saved
      * @return none
      */
-    public static void loadCorpusForTraining (String posList, 
+    public static void loadCorpusForTraining (String tagset, 
 					      String corpusDirectory,
 					      String saveLocation)
     {
-    	int numPOS = 0;
-	int numWords = 0;
+		int numWords = 0;
 
-	POS.loadFromFile(posList);
-
-	/* Hashmap of number of times each word appears
+		POS.loadFromFile(tagset);
+		int numPOS = POS.numPOS();
+		
+		/* Hashmap of number of times each word appears
          * in the training data for each part of speech;
-	 * as a hashmap of Strings to integer arrays.
-	 */ 
-	HashMap<String, int[]> word_to_pos = 
-	    new HashMap<String, int[]>();
+	 	 * as a hashmap of Strings to integer arrays, with each integer
+	 	 * representing a POS index.
+	 	 */ 
+		HashMap<String, int[]> word_to_pos = new HashMap<String, int[]>();
+		File dir = new File(tagset);
+	    File[] fl = dir.listFiles();
+	    
+	    for (int i = 0; i < fl.length; i++)
+	    	System.out.println (fl[i]);
+	    
 
 	/* array of number of times parts of speech
 	 * appear consecutively; pos_to_pos[i][j]
