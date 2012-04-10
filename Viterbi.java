@@ -10,16 +10,15 @@ import java.util.ArrayList;
  * <p>
  * The class can train itself from probabilities provided by
  * a dictionary, and then save and load the needed data into a 
- * file. The required files is a list of part of parts of speech,
- * and then the directory of the corpus. 
+ * file. There are two required files for training: a corpus tagset
+ * and thedirectory of the corpus. 
  * <p> 
- * The list of parts of speech should be in the form of having
+ * The corpus tagset should be in the form of having
  * each part of speech on its own line, each POS symbol exactly 1 "word"
  * long followed by a tab and the real English english term for the POS
  * such as <br>
  * [POS symbol] \t [POS term] 
  * e.g.
- * bed	verb "to be", past tense, 2nd person singular or all persons plural)
  * cs	conjunction, subordinating
  * <p>
  * Each corpus text file should be a compete English text, with each word
