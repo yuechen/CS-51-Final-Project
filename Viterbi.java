@@ -203,6 +203,44 @@ public class Viterbi
         	}
         
         System.out.println ("Total number of words:" + word_to_pos.size());*/
+        
+        // Joy's code. Joy, you had too many bugs and I had to comment out.
+        /*	array of number of times parts of speech
+	 * appear consecutively; pos_to_pos[i][j]
+	 * should indicate the number of times that 
+	 * j appeared immediately after i; should be 
+	 * of size [number of parts of speech][number of parts of speech]
+	 
+	int[][] pos_to_pos = new int[numPos][numPos];
+
+	 the number of times each part of speech occurs 
+	int[] posFrequencies = new int[numPos];
+
+	// read and load corpus file frequencies
+	File corpusDir = new File(corpusDirectory);
+	BufferedReader in;
+
+	for (int i = 0; i<5; i++) //iterate over files in directory with String fileName -- current insides only for compilation purposes
+	{
+	    in = new BufferedReader(new FileReader(fileName));
+		// deal with frequencies
+	}
+
+	BufferedWriter saveFile = new BufferedWriter(new FileWriter(saveDirectory));
+
+	// save training files and compute probabilities as saving
+
+	// write numPOS
+	saveFile.write(numPOS.toString());
+	saveFile.write(newLine());
+
+	// write numWords
+	saveFile.write(numWords.toString());
+	saveFile.write(newLine());
+	
+	// write words_to_pos log probabilities
+
+	// write pos_to_pos log probailities*/
     }
 
     /**
