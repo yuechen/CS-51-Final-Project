@@ -1,3 +1,8 @@
+---IGNORE---
+-hl
+-nc
+-tl
+---IGNORE---
 (	opening parenthesis
 )	closing parenthesis
 *	negator
@@ -5,6 +10,9 @@
 --	dash
 .	sentence terminator
 :	colon
+``	open quote
+''	closed quote
+'	single quote
 abl	determiner/pronoun, pre-qualifier
 abn	determiner/pronoun, pre-quantifier
 abx	determiner/pronoun, double conjunction or pre-quantifier
@@ -123,6 +131,7 @@ md*	modal auxillary, negated
 md+hv	modal auxillary + verb "to have", uninflected form
 md+ppss	modal auxillary + pronoun, personal, nominative, not 3rd person singular
 md+to	modal auxillary + infinitival to
+nil	non-existent part of speech
 nn	noun, singular, common
 nn$	noun, singular, common, genitive
 nn+bez	noun, singular, common + verb "to be", present tense, 3rd person singular
