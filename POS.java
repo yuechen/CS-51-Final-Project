@@ -1,5 +1,3 @@
-package tagger;
-
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.BufferedReader;
@@ -31,6 +29,9 @@ public class POS
 
     /** name of a part of speech, such as "noun" or "adjective"*/
     private String name;
+    
+    /** regex of the tags to ignore when reading corpus */
+    private static String ignoreRegex = "";
 
     /** hashMap of symbols to indices */
     private static HashMap<String, Integer> symbolToIndex = new HashMap<String, Integer>();
@@ -87,6 +88,16 @@ public class POS
     {
 		return indexToPOS.size();
     }
+    
+    /**
+     * Gets the the regular expression for the tags to be ignored when
+     * assigning parts of speech.
+     * @return regular expression for tags to be ignored
+     */
+    public static String getIgnoreRegex ()
+    {
+		return ignoreRegex;
+    }
 
     /**
      * Returns a <code>POS</code> object given an index
@@ -105,12 +116,14 @@ public class POS
      * @param symbol text literal representing POS, as defined by corpus tagset
      * @return integer index of that part of speech
      */
-    public static int getPOSIndexBySymbol (String symbol) throws POSNotFoundException
+    public static int getIndexBySymbol (String symbol) throws POSNotFoundException
     {
 		if (symbolToIndex.containsKey(symbol))
 			return symbolToIndex.get(symbol);
-		else
+		else {
+			System.out.println (symbol + " doesn't exist...");
 			throw new POSNotFoundException();
+		}
     }
 
     /**
@@ -133,8 +146,23 @@ public class POS
         try {
             s = new Scanner(new BufferedReader(new FileReader(tagset)));
         	s.useDelimiter ("\n");
-        	POS p;
         	
+        	// find out which tags to ignore and store in ignore_regex
+        	if (s.findInLine ("---IGNORE---") != null) {
+        		s.useDelimiter ("---IGNORE---");
+        		Scanner s2 = new Scanner (s.next().trim());
+        		s.useDelimiter ("\n");
+        		s.next();
+        		
+        		s2.useDelimiter("\n");
+        		while (s2.hasNext())
+        			ignoreRegex = ignoreRegex + "|" + s2.next();
+        			
+        		ignoreRegex = ignoreRegex.substring(1);
+        	}
+        	
+        	// read the tagset file and retrieve data
+        	POS p;
             while (s.hasNext()) {
                 String[] pair = (s.next()).split("\t");
                 p = new POS (pair[0], pair[1]);
@@ -157,6 +185,7 @@ public class POS
         while (i.hasNext()) {
         	String k = i.next();
         	System.out.println (k + "\t" + symbolToIndex.get(k));
-        }*/
+        }
+        */
     }
 }
