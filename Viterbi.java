@@ -139,6 +139,13 @@ public class Viterbi
 	 	 * representing a POS index.
 	 	 */ 
 		HashMap<String, int[]> word_to_pos = new HashMap<String, int[]>();
+		
+		/* Two dimension of number of times each POS appears
+		 * after a specific POS. */
+		int[][] pos_to_pos = new int[numPOS][numPOS];
+		int POSIndex = -1;
+		int lastPOSIndex = -1;
+		
 		File dir = new File(corpusDirectory);
 	    File[] fl = dir.listFiles();
 	    
@@ -165,7 +172,6 @@ public class Viterbi
                 	String symbol = s.substring(lastIndex + 1).
                 		replaceAll(POS.getIgnoreRegex(), "");
                 	
-                	int POSIndex = -1;
                 	try {
                 		POSIndex = POS.getIndexBySymbol(symbol);
                 	} catch (POSNotFoundException e) {
@@ -175,13 +181,23 @@ public class Viterbi
                 	
                 	int[] arr;
                 	
-                	if (word_to_pos.containsKey(word))
-                		arr = word_to_pos.get(word);
-                	else
+                	// add to word_to_pos
+                	if (word_to_pos.containsKey(word)) {
+                		word_to_pos.get(word)[POSIndex]++;
+                	}
+                	else {
                 		arr = new int[numPOS];
+                		arr[POSIndex]++;
+                		word_to_pos.put (word, arr);
+                	}
                 	
-                	arr[POSIndex]++;
-                	word_to_pos.put (word, arr);
+                	// add to pos_to_pos
+                	if (lastPOSIndex < 0) {
+                		lastPOSIndex = POSIndex;
+                		continue;
+                	} else {
+                		pos_to_pos[lastPOSIndex][POSIndex]++; 
+                	}
                 }
         	} 
         	finally 
@@ -202,8 +218,8 @@ public class Viterbi
         		System.out.println (k + "\t" + Arrays.toString(word_to_pos.get(k)));
         	}
         
-        System.out.println ("Total number of words:" + word_to_pos.size());*/
-        
+        System.out.println ("Total number of words: " + word_to_pos.size());
+        */
         // Joy's code. Joy, you had too many bugs and I had to comment out.
         /*	array of number of times parts of speech
 	 * appear consecutively; pos_to_pos[i][j]
