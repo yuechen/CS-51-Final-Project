@@ -23,6 +23,11 @@ public class POS
 {
     /** unique index for each part of speech */
     private int index;
+    
+    /** a generalized index for the part of speech
+      * i.e. verb "to be", present tense, 3rd person singular, negated => verb
+      */
+    private int gIndex;
 
     /** symbol (in tagged corpus) of each part of speech */
     private String symbol;
@@ -39,6 +44,9 @@ public class POS
     /** ArrayList of all the existing <code>POS</code> objects, indexed by the
      * indicies of the <code>POS</code> objects*/
     private static ArrayList<POS> indexToPOS = new ArrayList<POS>();
+    
+    /** HashMap of gIndices to descriptions of parts of speech. */
+    private static HashMap<Integer, String> gIndexTogName = new HashMap<Integer, String>();
 
     /** 
      * Constructs the POS object with the data provided the constructor.
@@ -46,10 +54,11 @@ public class POS
      * @param name text literal representing the name of a part of speech
      * @return none
      */
-    private POS (String symbol, String name)
+    private POS (String symbol, String name, int gIndex)
     {
 		this.symbol = symbol;
 		this.name = name;
+		this.gIndex = gIndex;
 		this.index = indexToPOS.size();
     }
     
@@ -98,6 +107,16 @@ public class POS
     {
 		return ignoreRegex;
     }
+    
+    /**
+      * Gets the description of a general part of speech, given the gIndex.
+      * @param gIndex the index of the general part of speech
+      * @return name of the general part of speech
+      */
+    public static String getgName(int gIndex)
+    {
+    	return gIndexTogName.get(gIndex);
+    }
 
     /**
      * Returns a <code>POS</code> object given an index
@@ -135,20 +154,77 @@ public class POS
  	 * [POS symbol] \t [POS term] 
  	 * e.g.
  	 * cs	conjunction, subordinating
+ 	 * @param gtagset text file containing a legend for the tags. Maps a simplified
+ 	 * tag name to a comma-separated list of POSIndices, such as <br>
+ 	 * [POS name] \t [POS symbol 1], [POS symbol 2], [POS symbol 3]...
+ 	 * e.g.
+ 	 * verb	vb+at,vb+in,vb+jj,vb+ppo...
+ 	 * noun nn+bez,nn+hvd,nn+hvz,nn+in,nn+md,nn+nn...
      * @return none
      */
-    public static void loadFromFile (String tagset) throws IOException
+    public static void loadFromFile (String tagset, String gtagset) throws IOException
     {
+		// deal with gtagset
+		Scanner s = null;
+		HashMap<String, Integer> symbolTogIndex = new HashMap<String, Integer>();
+		gIndexTogName.clear();
+		
+		try
+		{
+			s = new Scanner(new BufferedReader(new FileReader(gtagset)));
+			s.useDelimiter ("\n");
+			
+			int j = 0;
+			while (s.hasNext())
+			{
+				String[] pair = s.next().split("\t");
+				String pName = pair[0];
+				String[] pSymbols = pair[1].split(" ");
+				
+				for (int i = 0; i < pSymbols.length; i++)
+				{
+					gIndexTogName.put(j, pName);
+					symbolTogIndex.put(pSymbols[i], j);
+				}
+				
+				j++;
+			}
+		}
+		finally
+		{
+			if (s != null)
+                s.close();
+		}
+		
+		// test
+		/*Set<String> ks = symbolTogIndex.keySet();
+        Iterator<String> i = ks.iterator();
+        while (i.hasNext()) {
+        	String k = i.next();
+        	System.out.println (k + "\t" + symbolTogIndex.get(k));
+        }*/
+        /*
+        Set<Integer> ks = gIndexTogName.keySet();
+        Iterator<Integer> i = ks.iterator();
+        while (i.hasNext()) {
+        	int k = i.next();
+        	System.out.println (k + "\t" + gIndexTogName.get(k));
+        }
+        */
+		
+		// deal with tagset
     	indexToPOS.clear();
     	symbolToIndex.clear();
-		Scanner s = null;
+		s = null;
 
-        try {
+        try 
+        {
             s = new Scanner(new BufferedReader(new FileReader(tagset)));
         	s.useDelimiter ("\n");
         	
         	// find out which tags to ignore and store in ignore_regex
-        	if (s.findInLine ("---IGNORE---") != null) {
+        	if (s.findInLine ("---IGNORE---") != null)
+        	{
         		s.useDelimiter ("---IGNORE---");
         		Scanner s2 = new Scanner (s.next().trim());
         		s.useDelimiter ("\n");
@@ -163,17 +239,20 @@ public class POS
         	
         	// read the tagset file and retrieve data
         	POS p;
-            while (s.hasNext()) {
+            while (s.hasNext())
+            {
                 String[] pair = (s.next()).split("\t");
-                p = new POS (pair[0], pair[1]);
+                /*System.out.println (pair[0] + "\t" + pair[1] + "\t" + symbolTogIndex.get(pair[0]));*/
+                p = new POS (pair[0], pair[1], symbolTogIndex.get(pair[0]));
                 
                 indexToPOS.add (p);
 				symbolToIndex.put (p.getSymbol(), p.getIndex());
             }
-        } finally {
-            if (s != null) {
+        }
+        finally 
+        {
+            if (s != null)
                 s.close();
-            }
         }
         
         // testing code

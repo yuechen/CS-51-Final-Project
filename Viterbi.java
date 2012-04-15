@@ -1,10 +1,14 @@
 import java.util.LinkedList;
 import java.util.HashMap;
+import java.util.Map;
+
 import java.util.ArrayList;
 import java.io.IOException;
 import java.io.File;
 import java.util.Scanner;
+import java.io.PrintWriter;
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.FileReader;
 
 import java.util.Arrays;
@@ -35,9 +39,9 @@ import java.util.Iterator;
  * The training file will be printed in the form <br>
  * numPOS <br>
  * numWords <br>
- * "word1" log(probability POS1) log(probabilty POS2) ... log(probability POSlast) <br>
+ * "word1" index_POS1 log(probability POS1) index_POS2 log(probabilty POS2) ... <br>
  * ... <br>
- * "wordlast" log(probability POS1) log(probabilty POS2) ... log(probability POSlast) <br>
+ * "wordlast" index_POS1 log(probability POS1) index_POS1 log(probabilty POS2) ...  <br>
  * "POS1" log(probability POS1 following) log(probability POS2 following) ... log(probability POSlast following)<br>
  * ... <br>
  * "POS2" log(probability POS1 following) log(probability POS2 following) ... log(probability POSlast following)<br>
@@ -79,7 +83,7 @@ public class Viterbi
     /**
      * Basic constructor
      */
-    private Viterbi(String tagset)
+    private Viterbi(String tagset, String gtagset)
     {
     }
 
@@ -87,29 +91,32 @@ public class Viterbi
      * Constructor; initializes the probability table from the 
      * given saved training file. (See above for format of file.)
      * @param tagset the file containing a list of parts of speech
+     * @param gtagset text file containing a legend for the tags; maps a simplified
+ 	 * tag name to a comma-separated list of POSIndices
      * @param datafile the name of the file of saved probability data
      * @return none
      */
-    public Viterbi(String tagset, String datafile) throws IOException
+    public Viterbi(String tagset, String gtagset, String datafile)
     {
 	// tries to load the tagset
 	try
 	{
-	    POS.loadFromFile (tagset);
+	    POS.loadFromFile (tagset, gtagset);
 	}
 	catch (IOException e)
 	{
 	    System.out.println("oops. The tagset could not be loaded properly.");
-	    System.exit(0);
+	    System.exit(1);
 
 	    // TO-DO: better error handling?
 	}
 
+	Scanner sc = null;
 	// deals with the actual data file
 	try 
 	{
 	    // tries to open the file
-	    Scanner sc = new Scanner(new BufferedReader(new FileReader(datafile)));
+	    sc = new Scanner(new BufferedReader(new FileReader(datafile)));
 
 	    // reads in the first two numerical values
 	    this.numPOS = sc.nextInt();
@@ -122,41 +129,61 @@ public class Viterbi
 		throw new Exception("The training file does not seem to match the indicated tagset.");
 
 	    // initializes the probability array
-	    this.transition = new float[this.numPOS][this.numPOS];
-
+	    this.p_transmission = new float[this.numPOS][this.numPOS];
+	    
 	    // reads file and loads emission probabilities
 	    String word;
 	    float[] probability;
+	    String[] line;
+	    int numEntries;
+	    
 	    for (int i = 0; i < numWords; i++)
 	    {
 		probability = new float[this.numPOS];
-		word = sc.next("\s++");
+		word = sc.next("\\S+");
 		sc.skip(" ");
+		line = sc.nextLine().split(" ");
+		numEntries = (line.length+1)/2;
+
+		// sets default probabilities
+		for (int j = 0; j < numPOS; j++)
+		{
+		    probability[j] = Float.MIN_VALUE;
+		}
 		
 		// gets actual probabilities
-		for (int j = 0; j < numPOS; j++)
-		    probability[j] = sc.nextFloat();
-
-		sc.nextLine();
+		for (int j = 0; j < numEntries; j+=2)
+		{
+		    probability[Integer.parseInt(line[j])] = Float.parseFloat(line[j+1]);
+		}
 
 		// adds to hash map
 		this.p_emission.put(word, probability);
 	    }
-
+	    
 	    // reads file and loads transmission probabilities
 	    for (int i = 0; i < numPOS; i++)
 	    {
 		// gets POS and checks that it has the right index
-		word = sc.next("\s++");
+		word = sc.next("\\S+");
 		sc.skip(" ");
-		if (i != POS.getIndexBySymbol("word"))
+		if (i != POS.getIndexBySymbol(word))
 		    throw new Exception("The training file does not seem to match the indicated tagset.");
 
-		// puts actual probabilities
-		for (int j = 0; j < numPOS; j++)
-		    this.p_transmission[i][j] = sc.nextFloat();
+		line = sc.nextLine().split(" ");
+		numEntries = (line.length+1)/2;
 
-		sc.nextLine();
+		// sets default probabilities
+		for (int j = 0; j < numPOS; j++)
+		{
+		    p_transmission[i][j] = Float.MIN_VALUE;
+		}
+		
+		// gets actual probabilities
+		for (int j = 0; j < numEntries; j+=2)
+		{
+		    p_transmission[i][Integer.parseInt(line[j])] = Float.parseFloat(line[j+1]);
+		}
 	    }
 	}
 	catch (Exception e)
@@ -165,6 +192,8 @@ public class Viterbi
 		System.out.println("oops. The training data file could not be loaded properly.");
 	    else
 		System.out.println(e.getMessage());
+
+	    System.exit(1);
 	}
 	finally
 	{
@@ -179,12 +208,14 @@ public class Viterbi
      * of speech for each word. 
      * @param tagset the file containing the tagset, as defined in the class 
      description.
+     * @param gtagset text file containing a legend for the tags; maps a simplified
+ 	 * tag name to a comma-separated list of POSIndices
      * @param corpusDirectory the name of the directory containing
      the corpus
      * @param saveLocation where the probabilities are to be saved
      * @return none
      */
-    public static void loadCorpusForTraining (String tagset, 
+    public static void loadCorpusForTraining (String tagset, String gtagset,
 					      String corpusDirectory,
 					      String saveLocation)
     {
@@ -192,7 +223,7 @@ public class Viterbi
 
 	try
     {
-	   	POS.loadFromFile (tagset);
+	   	POS.loadFromFile (tagset, gtagset);
 	}
 	catch (IOException e)
 	{
@@ -284,6 +315,10 @@ public class Viterbi
 			    pos_frequencies[POSIndex]++;
 			}
         } 
+	    catch (Exception e)
+		{
+		    System.exit(1);
+		}
 	    finally 
         {
 		    if (scanner != null)
@@ -305,44 +340,65 @@ public class Viterbi
         
 	  System.out.println ("Total number of words: " + word_to_pos.size());
         */
-        
-        /* array of number of times parts of speech
-	 * appear consecutively; pos_to_pos[i][j]
-	 * should indicate the number of times that 
-	 * j appeared immediately after i; should be 
-	 * of size [number of parts of speech][number of parts of speech]
-	 */
-	 
-	 int[][] pos_to_pos = new int[numPos][numPos];
+	numWords = word_to_pos.size();
+	PrintWriter saveFile = null;
 
-	 the number of times each part of speech occurs 
-	 int[] posFrequencies = new int[numPos];
+	try
+        {
+	    // open file to be saved
+	    saveFile = new PrintWriter(new FileWriter(saveLocation));
 
-	 // read and load corpus file frequencies
-	 File corpusDir = new File(corpusDirectory);
-	 BufferedReader in;
+	    // write numPOS
+	    saveFile.println(numPOS);
+	    
+	    // write numWords
+	    saveFile.println(numWords);
+	    
+	    String line;
+	    
+	    // write emission probabilities
+	    Set<Map.Entry<String, int[]>> prob_e = word_to_pos.entrySet();
+	    Iterator<Map.Entry<String, int[]>> it = prob_e.iterator();
+	    Map.Entry<String, int[]> e;
+	    int[] p;
 
-	 for (int i = 0; i<5; i++) //iterate over files in directory with String fileName -- current insides only for compilation purposes
-	 {
-	 in = new BufferedReader(new FileReader(fileName));
-	 // deal with frequencies
-	 }
+	    for (int i = 0; i < numWords; i++)
+	    {
+		e = it.next();
+		p = e.getValue();
+		line = e.getKey() + " ";
 
-	 BufferedWriter saveFile = new BufferedWriter(new FileWriter(saveDirectory));
+		for (int j = 0; j < numPOS; j++)
+		{
+		    if (p[j] > 0)
+			line += j + " " + Math.log((float)p[j]/pos_frequencies[j]) + " ";
+		}
 
-	 // save training files and compute probabilities as saving
-
-	 // write numPOS
-	 saveFile.write(numPOS.toString());
-	 saveFile.write(newLine());
-
-	 // write numWords
-	 saveFile.write(numWords.toString());
-	 saveFile.write(newLine());
-	
-	 // write words_to_pos log probabilities
-
-	 // write pos_to_pos log probailities*/
+		saveFile.println(line);
+	    }
+	    
+	    // write transmission probabilities
+	    for (int i = 0; i < numPOS; i++)
+	    {
+		line = POS.getPOSbyIndex(i).getSymbol() + " ";
+		for (int j = 0; j < numPOS; j++)
+		{
+		    if (pos_to_pos[i][j] > 0)
+			line += j + " " + Math.log((float)pos_to_pos[i][j]/pos_frequencies[i]) + " ";
+		}
+		
+		saveFile.println(line);
+	    }
+	}
+	catch (IOException e)
+	{
+	    System.out.println("File could not be saved.");
+	    System.exit(1);
+	}
+	finally
+	{
+	    saveFile.close();
+	}
     }
 
     /**
@@ -351,7 +407,14 @@ public class Viterbi
      * @param results list of outputs
      * @return list of (state, output) pairs
      */
-    /*public List<Pair<String, POS>> parse(ArrayList<S> results)
+    public ArrayList<Pair<String, POS>> parse(ArrayList<String> results)
       {
-      }*/
+	  int length = results.size();
+	  ArrayList<Pair<String, POS>> sentence = new ArrayList<Pair<String,POS>>();
+
+	  for(int i = 0; i < length; i++)
+	      sentence.add(new Pair<String, POS>(results.get(i), POS.getPOSbyIndex(0)));
+
+	  return sentence;
+      }
 }

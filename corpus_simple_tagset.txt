@@ -1,0 +1,11 @@
+adjective	at jj jj$ jj+jj jjr jjr+cs jjs jjt
+adverb	ql qlp rb rb$ rb+bez rb+cs rbr rbr+cs rbt rn rp rp+in
+conjunction	cc cs
+existential there	ex ex+bez ex+hvd ex+hvz ex+md
+interjection	uh
+noun	nn nn$ nn+bez nn+hvd nn+hvz nn+in nn+md nn+nn nns nns$ nns+md np np$ np+bez np+hvz np+md nps nps$ nr nr$ nr+md nrs
+non-english-words	( ) * , -- . : `` '' ' cd cd$ od fw-* fw-at fw-at+nn fw-at+np fw-be fw-ber fw-bez fw-cc fw-cd fw-cs fw-dt fw-dt+bez fw-dts fw-hv fw-in fw-in+at fw-in+nn fw-in+np fw-jj fw-jjr fw-jjt fw-nn fw-nn$ fw-nns fw-np fw-nps fw-nr fw-od fw-pn fw-pp$ fw-ppl fw-ppl+vbz fw-ppo fw-ppo+in fw-pps fw-ppss fw-ppss+hv fw-ql fw-rb fw-rb+cc fw-to+vb fw-uh fw-vb fw-vbd fw-vbg fw-vbn fw-vbz fw-wdt fw-wpo fw-wps nil
+preposition	in in+in in+ppo to to+vb
+pronoun abl abn abx ap ap$ ap+ap pn pn$ pn+bez pn+hvd pn+hvz pn+md pp$ pp$$ ppl ppls ppo pps pps+bez pps+hvd pps+hvz pps+md ppss ppss+bem ppss+ber ppss+bez ppss+bez* ppss+hv ppss+hvd ppss+md ppss+vb dt dt$ dt+bez dt+md dti dts dts+bez dtx
+verb	be bed bed* bedz bedz* beg bem bem* ben ber ber* bez bez* do do* do+ppss dod dod* doz doz* hv hv* hv+to hvd hvd* hvg hvn hvz hvz* md md* md+hv md+ppss md+to vb vb+at vb+in vb+jj vb+ppo vb+rp vb+to vb+vb vbd vbg vbg+to vbn vbn+to vbz
+wh-determiner	wdt wdt+ber wdt+ber+pp wdt+bez wdt+do+pps wdt+dod wdt+hvz wp$ wpo wps wps+bez wps+hvd wps+hvz wps+md wql wrb wrb+ber wrb+bez wrb+do wrb+dod wrb+dod* wrb+doz wrb+in wrb+md
