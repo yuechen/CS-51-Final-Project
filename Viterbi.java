@@ -38,9 +38,9 @@ import java.util.Iterator;
  * "word1" log(probability POS1) log(probabilty POS2) ... log(probability POSlast) <br>
  * ... <br>
  * "wordlast" log(probability POS1) log(probabilty POS2) ... log(probability POSlast) <br>
- * "POS1" log(probaility POS1 following) log(probability POS2 following) ... log(probability POSlast following)<br>
+ * "POS1" log(probability POS1 following) log(probability POS2 following) ... log(probability POSlast following)<br>
  * ... <br>
- * "POSlast" log(probaility POS1 following) log(probability POS2 following) ... log(probability POSlast following)<br>
+ * "POS2" log(probability POS1 following) log(probability POS2 following) ... log(probability POSlast following)<br>
  * where "word1", "POS1", etc are replaced by the actual words or
  * names of parts of speech
  * <p>
@@ -65,7 +65,7 @@ public class Viterbi
      * represented as a HashMap of Strings (words) to arrays
      * of probabilities.
      */
-    private HashMap<String, float[]> p_emission;
+    private HashMap<String, float[]> p_emission = new HashMap<String, float[]>();
 
     /**
      * The logs of the transmission probabilities of the model,
@@ -92,18 +92,85 @@ public class Viterbi
      */
     public Viterbi(String tagset, String datafile) throws IOException
     {
-		try
-		{
-			POS.loadFromFile (tagset);
-		}
-		catch (IOException e)
-		{
-			System.out.println ("oops.");
-		}
+	// tries to load the tagset
+	try
+	{
+	    POS.loadFromFile (tagset);
+	}
+	catch (IOException e)
+	{
+	    System.out.println("oops. The tagset could not be loaded properly.");
+	    System.exit(0);
 
-		// initalizes the probability arrays
+	    // TO-DO: better error handling?
+	}
 
-		// read file and load probabilities
+	// deals with the actual data file
+	try 
+	{
+	    // tries to open the file
+	    Scanner sc = new Scanner(new BufferedReader(new FileReader(datafile)));
+
+	    // reads in the first two numerical values
+	    this.numPOS = sc.nextInt();
+	    sc.nextLine();
+	    this.numWords = sc.nextInt();
+	    sc.nextLine();
+
+	    // basic check that the number of parts of speech matches up
+	    if (this.numPOS != POS.numPOS())
+		throw new Exception("The training file does not seem to match the indicated tagset.");
+
+	    // initializes the probability array
+	    this.transition = new float[this.numPOS][this.numPOS];
+
+	    // reads file and loads emission probabilities
+	    String word;
+	    float[] probability;
+	    for (int i = 0; i < numWords; i++)
+	    {
+		probability = new float[this.numPOS];
+		word = sc.next("\s++");
+		sc.skip(" ");
+		
+		// gets actual probabilities
+		for (int j = 0; j < numPOS; j++)
+		    probability[j] = sc.nextFloat();
+
+		sc.nextLine();
+
+		// adds to hash map
+		this.p_emission.put(word, probability);
+	    }
+
+	    // reads file and loads transmission probabilities
+	    for (int i = 0; i < numPOS; i++)
+	    {
+		// gets POS and checks that it has the right index
+		word = sc.next("\s++");
+		sc.skip(" ");
+		if (i != POS.getIndexBySymbol("word"))
+		    throw new Exception("The training file does not seem to match the indicated tagset.");
+
+		// puts actual probabilities
+		for (int j = 0; j < numPOS; j++)
+		    this.p_transmission[i][j] = sc.nextFloat();
+
+		sc.nextLine();
+	    }
+	}
+	catch (Exception e)
+	{
+	    if (e instanceof IOException)
+		System.out.println("oops. The training data file could not be loaded properly.");
+	    else
+		System.out.println(e.getMessage());
+	}
+	finally
+	{
+	    if (sc != null)
+		sc.close();
+	}
     }
 
     /**
@@ -111,152 +178,171 @@ public class Viterbi
      * neighborings parts of speech and the frequences of each part
      * of speech for each word. 
      * @param tagset the file containing the tagset, as defined in the class 
-     		  description.
+     description.
      * @param corpusDirectory the name of the directory containing
-                              the corpus
+     the corpus
      * @param saveLocation where the probabilities are to be saved
      * @return none
      */
     public static void loadCorpusForTraining (String tagset, 
 					      String corpusDirectory,
-					      String saveLocation) throws IOException
+					      String saveLocation)
     {
-		int numWords = 0;
+	int numWords = 0;
 
-		try
-		{
-			POS.loadFromFile (tagset);
-		}
-		catch (IOException e)
-		{
-			System.out.println ("File I/O Error.");
-		}
-		int numPOS = POS.numPOS();
+	try
+    {
+	   	POS.loadFromFile (tagset);
+	}
+	catch (IOException e)
+	{
+	 	System.out.println ("File I/O Error.");
+	 	System.exit(1);
+	}
+	
+	int numPOS = POS.numPOS();
 		
-		/* Hashmap of number of times each word appears
-         * in the training data for each part of speech;
-	 	 * as a hashmap of Strings to integer arrays, with each integer
-	 	 * representing a POS index.
-	 	 */ 
-		HashMap<String, int[]> word_to_pos = new HashMap<String, int[]>();
+	/* Hashmap of number of times each word appears
+	 * in the training data for each part of speech;
+	 * as a hashmap of Strings to integer arrays, with each integer
+	 * representing a POS index.
+	 */ 
+	HashMap<String, int[]> word_to_pos = new HashMap<String, int[]>();
 		
-		/* Two dimension of number of times each POS appears
-		 * after a specific POS. */
-		int[][] pos_to_pos = new int[numPOS][numPOS];
-		int POSIndex = -1;
-		int lastPOSIndex = -1;
-		
-		File dir = new File(corpusDirectory);
-	    File[] fl = dir.listFiles();
+	/* Two dimension of number of times each POS appears
+	 * after a specific POS.
+	 */
+	int[][] pos_to_pos = new int[numPOS][numPOS];
+	int POSIndex = -1;
+	int lastPOSIndex = -1;
+	
+	/* One dimension array of number of times each POS appears in the corpus */
+	int[] pos_frequencies = new int[numPOS];
+
+	File dir = new File(corpusDirectory);
+	File[] fl = dir.listFiles();
 	    
-	    if (fl == null) {
-	    	System.out.println ("Directory not valid.");
-	    	throw new IOException();
-	    }
+	if (fl == null) {
+	   	System.out.println ("Directory not valid.");
+	   	System.exit(1);
+	}
+
+	Scanner scanner;
 	    
-	    Scanner scanner;
-	    
-	    for (int i = 0; i < fl.length; i++) {
-	    	scanner = null;
+	for (int i = 0; i < fl.length; i++)
+	{
+	    scanner = null;
 	    	
-	    	try 
-	    	{
-            	scanner = new Scanner(new BufferedReader(new FileReader(fl[i])));
+	    try 
+	    {
+		    scanner = new Scanner(new BufferedReader(new FileReader(fl[i])));
         	
-            	while (scanner.hasNext()) 
-            	{
-            		String s = scanner.next();
+		    while (scanner.hasNext()) 
+	    	{
+			    String s = scanner.next();
             		
-            		int lastIndex = s.lastIndexOf("/");
-                	String word = s.substring(0, lastIndex).toLowerCase();
-                	String symbol = s.substring(lastIndex + 1).
+			    int lastIndex = s.lastIndexOf("/");
+			    String word = s.substring(0, lastIndex).toLowerCase();
+			    String symbol = s.substring(lastIndex + 1).
                 		replaceAll(POS.getIgnoreRegex(), "");
                 	
-                	try {
-                		POSIndex = POS.getIndexBySymbol(symbol);
-                	} catch (POSNotFoundException e) {
-                		System.out.println ("POS not found.");
-                		return;
-                	}
+			    try 
+			    {
+                	POSIndex = POS.getIndexBySymbol(symbol);
+			    } 
+			    catch (POSNotFoundException e) 
+			    {
+                	System.out.println ("POS not found.");
+                	System.exit(1);
+			    }
                 	
-                	int[] arr;
+			    int[] arr;
                 	
-                	// add to word_to_pos
-                	if (word_to_pos.containsKey(word)) {
-                		word_to_pos.get(word)[POSIndex]++;
-                	}
-                	else {
-                		arr = new int[numPOS];
-                		arr[POSIndex]++;
-                		word_to_pos.put (word, arr);
-                	}
+			    // add to word_to_pos
+			    if (word_to_pos.containsKey(word))
+			    {
+                	word_to_pos.get(word)[POSIndex]++;
+			    }
+			    else 
+			    {
+                	arr = new int[numPOS];
+                	arr[POSIndex]++;
+                	word_to_pos.put (word, arr);
+			    }
                 	
-                	// add to pos_to_pos
-                	if (lastPOSIndex < 0) {
-                		lastPOSIndex = POSIndex;
-                		continue;
-                	} else {
-                		pos_to_pos[lastPOSIndex][POSIndex]++; 
-                	}
-                }
-        	} 
-        	finally 
-        	{
-            	if (scanner != null) {
+			    // add to pos_to_pos
+			    if (lastPOSIndex < 0) 
+			    {
+                	lastPOSIndex = POSIndex;
+                	continue;
+			    } else {
+                	pos_to_pos[lastPOSIndex][POSIndex]++;
+                	lastPOSIndex = POSIndex;
+			    }
+			    
+			    // add to pos_frequencies
+			    pos_frequencies[POSIndex]++;
+			}
+        } 
+	    finally 
+        {
+		    if (scanner != null)
+		    {
                 	scanner.close();
-            	}
-        	}
-	    }
+			}
+    	}
+	}
 	    
-	    // test code
-	    /*
-	    Set<String> ks = word_to_pos.keySet();
-        	Iterator<String> iter = ks.iterator();
-        	while (iter.hasNext()) {
-        		String k = iter.next();
-        		if (k.toLowerCase().equals("the"))
-        		System.out.println (k + "\t" + Arrays.toString(word_to_pos.get(k)));
-        	}
+	// test code
+	/*
+	  Set<String> ks = word_to_pos.keySet();
+	  Iterator<String> iter = ks.iterator();
+	  while (iter.hasNext()) {
+	  String k = iter.next();
+	  if (k.toLowerCase().equals("the"))
+	  System.out.println (k + "\t" + Arrays.toString(word_to_pos.get(k)));
+	  }
         
-        System.out.println ("Total number of words: " + word_to_pos.size());
+	  System.out.println ("Total number of words: " + word_to_pos.size());
         */
-        // Joy's code. Joy, you had too many bugs and I had to comment out.
-        /*	array of number of times parts of speech
+        
+        /* array of number of times parts of speech
 	 * appear consecutively; pos_to_pos[i][j]
 	 * should indicate the number of times that 
 	 * j appeared immediately after i; should be 
 	 * of size [number of parts of speech][number of parts of speech]
+	 */
 	 
-	int[][] pos_to_pos = new int[numPos][numPos];
+	 int[][] pos_to_pos = new int[numPos][numPos];
 
 	 the number of times each part of speech occurs 
-	int[] posFrequencies = new int[numPos];
+	 int[] posFrequencies = new int[numPos];
 
-	// read and load corpus file frequencies
-	File corpusDir = new File(corpusDirectory);
-	BufferedReader in;
+	 // read and load corpus file frequencies
+	 File corpusDir = new File(corpusDirectory);
+	 BufferedReader in;
 
-	for (int i = 0; i<5; i++) //iterate over files in directory with String fileName -- current insides only for compilation purposes
-	{
-	    in = new BufferedReader(new FileReader(fileName));
-		// deal with frequencies
-	}
+	 for (int i = 0; i<5; i++) //iterate over files in directory with String fileName -- current insides only for compilation purposes
+	 {
+	 in = new BufferedReader(new FileReader(fileName));
+	 // deal with frequencies
+	 }
 
-	BufferedWriter saveFile = new BufferedWriter(new FileWriter(saveDirectory));
+	 BufferedWriter saveFile = new BufferedWriter(new FileWriter(saveDirectory));
 
-	// save training files and compute probabilities as saving
+	 // save training files and compute probabilities as saving
 
-	// write numPOS
-	saveFile.write(numPOS.toString());
-	saveFile.write(newLine());
+	 // write numPOS
+	 saveFile.write(numPOS.toString());
+	 saveFile.write(newLine());
 
-	// write numWords
-	saveFile.write(numWords.toString());
-	saveFile.write(newLine());
+	 // write numWords
+	 saveFile.write(numWords.toString());
+	 saveFile.write(newLine());
 	
-	// write words_to_pos log probabilities
+	 // write words_to_pos log probabilities
 
-	// write pos_to_pos log probailities*/
+	 // write pos_to_pos log probailities*/
     }
 
     /**
@@ -266,6 +352,6 @@ public class Viterbi
      * @return list of (state, output) pairs
      */
     /*public List<Pair<String, POS>> parse(ArrayList<S> results)
-    {
-    }*/
+      {
+      }*/
 }
