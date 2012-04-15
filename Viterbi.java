@@ -83,7 +83,7 @@ public class Viterbi
     /**
      * Basic constructor
      */
-    private Viterbi(String tagset)
+    private Viterbi(String tagset, String gtagset)
     {
     }
 
@@ -91,15 +91,17 @@ public class Viterbi
      * Constructor; initializes the probability table from the 
      * given saved training file. (See above for format of file.)
      * @param tagset the file containing a list of parts of speech
+     * @param gtagset text file containing a legend for the tags; maps a simplified
+ 	 * tag name to a comma-separated list of POSIndices
      * @param datafile the name of the file of saved probability data
      * @return none
      */
-    public Viterbi(String tagset, String datafile)
+    public Viterbi(String tagset, String gtagset, String datafile)
     {
 	// tries to load the tagset
 	try
 	{
-	    POS.loadFromFile (tagset);
+	    POS.loadFromFile (tagset, gtagset);
 	}
 	catch (IOException e)
 	{
@@ -206,12 +208,14 @@ public class Viterbi
      * of speech for each word. 
      * @param tagset the file containing the tagset, as defined in the class 
      description.
+     * @param gtagset text file containing a legend for the tags; maps a simplified
+ 	 * tag name to a comma-separated list of POSIndices
      * @param corpusDirectory the name of the directory containing
      the corpus
      * @param saveLocation where the probabilities are to be saved
      * @return none
      */
-    public static void loadCorpusForTraining (String tagset, 
+    public static void loadCorpusForTraining (String tagset, String gtagset,
 					      String corpusDirectory,
 					      String saveLocation)
     {
@@ -219,7 +223,7 @@ public class Viterbi
 
 	try
     {
-	   	POS.loadFromFile (tagset);
+	   	POS.loadFromFile (tagset, gtagset);
 	}
 	catch (IOException e)
 	{
