@@ -12,17 +12,21 @@ public class TextParser
 	*/
 	private static String input;
 	
+	/**
+	* <code>viterbi</code> initializes the Viterbi object.
+	*/
 	private Viterbi viterbi;
 		
 	/**
-	* <code>sentlist</code> Linked List holds resulting list of sentences.
+	* <code>sentlist</code> ArrayList holds resulting list of sentences,
+	* which are ArrayLists of words.
 	*/
-
-	private static ArrayList<ArrayList<Pair<String, POS>>> sentlist = new ArrayList<ArrayList<Pair<String, POS>>>();
+	private static ArrayList<ArrayList<Pair<String, POS>>> sentlist =
+		new ArrayList<ArrayList<Pair<String, POS>>>();
 	
 	/**
-	* Constructor initializes input variable to an empty string and
-	* sentlist to null.
+	* Constructor initializes input variable to an empty string, 
+	* sentlist to null, and viterbi to the Viterbi object parameter.
 	*/
 	public TextParser(Viterbi v)
 	{
@@ -38,23 +42,42 @@ public class TextParser
 	*/
 	public static ArrayList<ArrayList<Pair<String, POS>>> parse(String text)
    {
-		input = text;
-
-		String sentarray[] =
-			input.split("((?<=([.!?]+\\s-(Mr\\.|Mrs\\.|Ms\\.)))|(?=([.!?]+\\s-(Mr\\.|Mrs\\.|Ms\\.))))");
-		int sents = sentarray.length;
+		//add whitespace to the end so last punctuation mark is not neglected
+		input = text + " ";
 		
+		/*
+		* Split input by ". ", "! ", and "? ". Does not split when punctuation
+		* is not followed by space to avoid certain abbreviations.
+		* Keeps the punctuation as separate element in array.
+		*/
+		String sentarray[] =
+			input.split("((?<=([.!?]+\\s))|(?=([.!?]+\\s)))");
+		int sents = sentarray.length / 2;
+		
+		//combine punctuation with sentences for an array of sentences with punctuation
+		String apsentarray[] = new String[sents];
+		for (int i = 0; i < sents; i++)
+		{
+			apsentarray[i] = sentarray[2 * i] + sentarray[2 * i + 1];
+		}
+		
+		//split sentences into words by space and punctuation, add to sentlist ArrayList
 		String wordarray[][] = new String[sents][];
 		for (int i = 0; i < sents; i++)
 		{
-			wordarray[i] = sentarray[i].split("((?<=(\\p{Punct}-('-)))|((?=(\\p{Punct}-('-))))");
+			//split into words and punctuation, keeping punctuation as elements in array
+			wordarray[i] =
+				apsentarray[i].split("((?<=(([.?!,:;\"]|\\s+)))|(?=(([.?!,:;\"]|\\s+))))");
 			
+			//add words to wordlist ArrayList
 			ArrayList<String> wordlist = new ArrayList<String>();
 			for (int j = 0; j < wordarray[i].length; j++)
 			{
 				wordlist.add(wordarray[i][j]);
 			}
-			sentlist.add(Viterbi(wordlist));
+		   
+			//add wordlist Arraylist as a sentence element to sentlist ArrayList
+			sentlist.add(viterbi.parse(wordlist));
 		}
 		return sentlist;
    }
