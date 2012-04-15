@@ -1,4 +1,5 @@
 package tagger;
+import java.util.*;
 
 /**
  * Contains the text parser.
@@ -11,11 +12,11 @@ public class TextParser
 	* <code>input</code> String holds initial block of text.
 	*/
 	private String input;
-	
+		
 	/**
 	* <code>sentlist</code> Linked List holds resulting list of sentences.
 	*/
-	private sentlist = new java.util.LinkedList();
+	private LinkedList<Pair<String, POS>> sentlist = new java.util.LinkedList();
 	
 	/**
 	* Constructor initializes input variable to an empty string and
@@ -24,7 +25,7 @@ public class TextParser
 	public TextParser()
 	{
 	 	input = "";
-		sentlist = null;
+		sentlist = null;		
 	}
 	
 	/**
@@ -32,10 +33,19 @@ public class TextParser
 	* @param text input block of text
 	* @return list of pairs of Strings and parts of speech
 	*/
-	public static List< Pair<String, POS> > parse(String text)
+	public static LinkedList<Pair<String, POS>> parse(String text)
    {
-		input = text
-		String[] sentarray = input.split("[.!?]+\\s-(Mr//.|Mrs\\.|Ms\\.)")
+		input = text;
+		String sentarray[] = input.split("[.!?]+\\s-(Mr\\.|Mrs\\.|Ms\\.)");
+		int sents = sentarray.length;
+		
+		String wordarray[][] = new String[sents][];
+		for (int i = 0; i < sents; i++)
+		{
+			wordarray[i] = sentarray[i].split(" ");
+			sentlist.LinkedList.add(Pair(wordarray[i], POSTaggerApp(wordarray[i])));
+		}
+		
+		return sentlist;
    }
-
 }
