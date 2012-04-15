@@ -18,7 +18,7 @@ import java.util.Iterator;
  * The class can train itself from probabilities provided by
  * a dictionary, and then save and load the needed data into a 
  * file. There are two required files for training: a corpus tagset
- * and thedirectory of the corpus. 
+ * and the directory of the corpus. 
  * <p> 
  * The corpus tagset should be in the form of having
  * each part of speech on its own line, each POS symbol exactly 1 "word"

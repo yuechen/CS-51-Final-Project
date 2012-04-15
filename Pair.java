@@ -1,4 +1,3 @@
-package tagger;
 
 /**
  * Contains the Pair class.
