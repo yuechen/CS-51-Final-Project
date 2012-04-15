@@ -212,7 +212,10 @@ public class Viterbi
 	int[][] pos_to_pos = new int[numPOS][numPOS];
 	int POSIndex = -1;
 	int lastPOSIndex = -1;
-		
+	
+	/* One dimension array of number of times each POS appears in the corpus */
+	int[] pos_frequencies = new int[numPOS];
+
 	File dir = new File(corpusDirectory);
 	File[] fl = dir.listFiles();
 	    
@@ -220,7 +223,7 @@ public class Viterbi
 	    System.out.println ("Directory not valid.");
 	    throw new IOException();
 	}
-	    
+
 	Scanner scanner;
 	    
 	for (int i = 0; i < fl.length; i++) {
@@ -243,7 +246,7 @@ public class Viterbi
                 		POSIndex = POS.getIndexBySymbol(symbol);
 			    } catch (POSNotFoundException e) {
                 		System.out.println ("POS not found.");
-                		return;
+                		System.exit;
 			    }
                 	
 			    int[] arr;
@@ -265,6 +268,9 @@ public class Viterbi
 			    } else {
                 		pos_to_pos[lastPOSIndex][POSIndex]++; 
 			    }
+			    
+			    // add to pos_frequencies
+			    pos_frequencies[POSIndex]++;
 			}
         	} 
 	    finally 
