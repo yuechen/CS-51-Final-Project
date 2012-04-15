@@ -186,29 +186,32 @@ public class Viterbi
      */
     public static void loadCorpusForTraining (String tagset, 
 					      String corpusDirectory,
-					      String saveLocation) throws IOException
+					      String saveLocation)
     {
 	int numWords = 0;
 
 	try
-        {
-	    POS.loadFromFile (tagset);
+    {
+	   	POS.loadFromFile (tagset);
 	}
 	catch (IOException e)
 	{
-	    System.out.println ("File I/O Error.");
+	 	System.out.println ("File I/O Error.");
+	 	System.exit(1);
 	}
+	
 	int numPOS = POS.numPOS();
 		
 	/* Hashmap of number of times each word appears
-         * in the training data for each part of speech;
+	 * in the training data for each part of speech;
 	 * as a hashmap of Strings to integer arrays, with each integer
 	 * representing a POS index.
 	 */ 
 	HashMap<String, int[]> word_to_pos = new HashMap<String, int[]>();
 		
 	/* Two dimension of number of times each POS appears
-	 * after a specific POS. */
+	 * after a specific POS.
+	 */
 	int[][] pos_to_pos = new int[numPOS][numPOS];
 	int POSIndex = -1;
 	int lastPOSIndex = -1;
@@ -220,21 +223,22 @@ public class Viterbi
 	File[] fl = dir.listFiles();
 	    
 	if (fl == null) {
-	    System.out.println ("Directory not valid.");
-	    throw new IOException();
+	   	System.out.println ("Directory not valid.");
+	   	System.exit(1);
 	}
 
 	Scanner scanner;
 	    
-	for (int i = 0; i < fl.length; i++) {
+	for (int i = 0; i < fl.length; i++)
+	{
 	    scanner = null;
 	    	
 	    try 
-	    	{
+	    {
 		    scanner = new Scanner(new BufferedReader(new FileReader(fl[i])));
         	
 		    while (scanner.hasNext()) 
-			{
+	    	{
 			    String s = scanner.next();
             		
 			    int lastIndex = s.lastIndexOf("/");
@@ -242,43 +246,51 @@ public class Viterbi
 			    String symbol = s.substring(lastIndex + 1).
                 		replaceAll(POS.getIgnoreRegex(), "");
                 	
-			    try {
-                		POSIndex = POS.getIndexBySymbol(symbol);
-			    } catch (POSNotFoundException e) {
-                		System.out.println ("POS not found.");
-                		System.exit;
+			    try 
+			    {
+                	POSIndex = POS.getIndexBySymbol(symbol);
+			    } 
+			    catch (POSNotFoundException e) 
+			    {
+                	System.out.println ("POS not found.");
+                	System.exit(1);
 			    }
                 	
 			    int[] arr;
                 	
 			    // add to word_to_pos
-			    if (word_to_pos.containsKey(word)) {
-                		word_to_pos.get(word)[POSIndex]++;
+			    if (word_to_pos.containsKey(word))
+			    {
+                	word_to_pos.get(word)[POSIndex]++;
 			    }
-			    else {
-                		arr = new int[numPOS];
-                		arr[POSIndex]++;
-                		word_to_pos.put (word, arr);
+			    else 
+			    {
+                	arr = new int[numPOS];
+                	arr[POSIndex]++;
+                	word_to_pos.put (word, arr);
 			    }
                 	
 			    // add to pos_to_pos
-			    if (lastPOSIndex < 0) {
-                		lastPOSIndex = POSIndex;
-                		continue;
+			    if (lastPOSIndex < 0) 
+			    {
+                	lastPOSIndex = POSIndex;
+                	continue;
 			    } else {
-                		pos_to_pos[lastPOSIndex][POSIndex]++; 
+                	pos_to_pos[lastPOSIndex][POSIndex]++;
+                	lastPOSIndex = POSIndex;
 			    }
 			    
 			    // add to pos_frequencies
 			    pos_frequencies[POSIndex]++;
 			}
-        	} 
+        } 
 	    finally 
-        	{
-		    if (scanner != null) {
+        {
+		    if (scanner != null)
+		    {
                 	scanner.close();
-		    }
-        	}
+			}
+    	}
 	}
 	    
 	// test code
