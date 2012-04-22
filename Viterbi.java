@@ -96,7 +96,8 @@ public class Viterbi
      * @param datafile the name of the file of saved probability data
      * @return none
      */
-    public Viterbi(String tagset, String gtagset, String datafile)
+    public Viterbi(String tagset, String gtagset, String datafile) 
+    	throws WrongFormatException
     {
 	// tries to load the tagset
 	try
@@ -217,7 +218,7 @@ public class Viterbi
      */
     public static void loadCorpusForTraining (String tagset, String gtagset,
 					      String corpusDirectory,
-					      String saveLocation)
+					      String saveLocation) throws WrongFormatException
     {
 	int numWords = 0;
 
