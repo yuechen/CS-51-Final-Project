@@ -8,9 +8,17 @@ import java.util.Set;
 import java.util.Iterator;
 
 /**
- * An exception for when a part of speech is not found, such as when the user gives an incomplete list of parts of speech.
+ * An exception for when a part of speech is not found, such as when the user gives an  
+ * incomplete list of parts of speech.
  */
 class POSNotFoundException extends Exception
+{
+}
+
+/**
+ * An exception for when a file given is in the incorrect format.
+ */
+class WrongFormatException extends Exception
 {
 }
 
@@ -54,7 +62,7 @@ public class POS
     public static POS get_default()
     {
 	   return indexToPOS.get(0);
-    } 
+    }
 
     /** 
      * Constructs the POS object with the data provided the constructor.
@@ -108,7 +116,7 @@ public class POS
     
     /**
      * Gets the the regular expression for the tags to be ignored when
-     * assigning parts of speech.
+     * reading parts of speech from the corpus.
      * @return regular expression for tags to be ignored
      */
     public static String getIgnoreRegex ()
@@ -147,64 +155,83 @@ public class POS
     {
 		if (symbolToIndex.containsKey(symbol))
 			return symbolToIndex.get(symbol);
-		else {
-			System.out.println (symbol + " doesn't exist...");
+		else
 			throw new POSNotFoundException();
-		}
     }
 
     /**
-     * Loads a list of parts of speech into memory from a file.
+     * Loads lists of parts of speech from tagset files into memory.
      * @param tagset text file containing the legend for the corpus. The corpus 
      * tagset should be in the form of having each part of speech on its own 
      * line, each POS symbol exactly 1 "word" long followed by a tab and the 
      * real English english term for the POS such as <br>
- 	 * [POS symbol] \t [POS term] 
- 	 * e.g.
- 	 * cs	conjunction, subordinating
+ 	 * [POS symbol] \t [POS term] <br>
+ 	 * e.g. <br>
+ 	 * cs	conjunction, subordinating <br>
+ 	 * If there are parts of POS determiners in the corpus that should be ignored,
+ 	 * there should be a section at the top of the corpus_tagset file delimited by
+ 	 * ---IGNORE---. Each part of a tag to be ignored is put on each line. See the
+ 	 * default corpus_tagset for an example.<br>
  	 * @param gtagset text file containing a legend for the tags. Maps a simplified
  	 * tag name to a comma-separated list of POSIndices, such as <br>
- 	 * [POS name] \t [POS symbol 1], [POS symbol 2], [POS symbol 3]...
- 	 * e.g.
- 	 * verb	vb+at,vb+in,vb+jj,vb+ppo...
- 	 * noun nn+bez,nn+hvd,nn+hvz,nn+in,nn+md,nn+nn...
+ 	 * [POS name] \t [POS symbol 1], [POS symbol 2], [POS symbol 3]... <br>
+ 	 * e.g. <br>
+ 	 * verb	vb+at,vb+in,vb+jj,vb+ppo... <br>
+ 	 * noun nn+bez,nn+hvd,nn+hvz,nn+in,nn+md,nn+nn... <br>
      * @return none
      */
-    public static void loadFromFile (String tagset, String gtagset) throws IOException
+    public static void loadFromFile (String tagset, String gtagset)
+    	throws IOException, WrongFormatException
     {
 		// deal with gtagset
+		
+		/* Initialize a scanner. Clear the current HashMap in case this is called twice
+		 * during execution.
+		 */
 		Scanner s = null;
 		HashMap<String, Integer> symbolTogIndex = new HashMap<String, Integer>();
 		gIndexTogName.clear();
 		
 		try
 		{
+			/* Read from gtagset into the two HashMaps, so that we can map specific
+			 * indices to simplified indices, and from simplified indices to simplified
+			 * names.
+			 */
 			s = new Scanner(new BufferedReader(new FileReader(gtagset)));
 			s.useDelimiter ("\n");
 			
 			int j = 0;
 			while (s.hasNext())
 			{
+				// symbols and gNames are separated by tabs
 				String[] pair = s.next().split("\t");
+				
+				// check to see if there was actually a tab!
+				if (pair.length != 2)
+					throw new WrongFormatException();
 				String pName = pair[0];
 				String[] pSymbols = pair[1].split(" ");
 				
+				// insert the correct data into the data structures
 				for (int i = 0; i < pSymbols.length; i++)
 				{
 					gIndexTogName.put(j, pName);
 					symbolTogIndex.put(pSymbols[i], j);
 				}
 				
+				// increment the index
 				j++;
 			}
 		}
 		finally
 		{
+			// need to close the corpus_simple_tagset file
 			if (s != null)
                 s.close();
 		}
 		
-		// test
+		// test code
 		/*Set<String> ks = symbolTogIndex.keySet();
         Iterator<String> i = ks.iterator();
         while (i.hasNext()) {
@@ -249,8 +276,12 @@ public class POS
         	POS p;
             while (s.hasNext())
             {
+            	// delimited by tabs
                 String[] pair = (s.next()).split("\t");
-                /*System.out.println (pair[0] + "\t" + pair[1] + "\t" + symbolTogIndex.get(pair[0]));*/
+                // check to see if there was actually a tab!
+				if (pair.length != 2)
+					throw new WrongFormatException();
+				
                 p = new POS (pair[0], pair[1], symbolTogIndex.get(pair[0]));
                 
                 indexToPOS.add (p);
@@ -259,6 +290,7 @@ public class POS
         }
         finally 
         {
+        	// close the file
             if (s != null)
                 s.close();
         }

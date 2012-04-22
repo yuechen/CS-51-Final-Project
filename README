@@ -1,0 +1,8 @@
+CS 51 Final Project: Part of Speech Tagger
+Contributors: Billy Janitsch, Jenny Liu, Yuechen Zhao, Joy Zheng
+
+To build code, go into highest level in repository and run:
+javac -classpath . *.java
+
+To execute, run:
+java POSTaggerApp
