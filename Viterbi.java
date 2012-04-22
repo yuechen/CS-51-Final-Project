@@ -69,7 +69,7 @@ public class Viterbi
      * represented as a HashMap of Strings (words) to arrays
      * of probabilities.
      */
-    private HashMap<String, float[]> p_emission = new HashMap<String, float[]>();
+    /*private*/ HashMap<String, float[]> p_emission = new HashMap<String, float[]>();
 
     /**
      * The logs of the transmission probabilities of the model,
@@ -78,7 +78,7 @@ public class Viterbi
      * transmission probability for moving from 
      * POS 1 to POS 2. 
      */
-    private float[][] p_transmission;
+    /*private*/ float[][] p_transmission;
 
     /**
      * Basic constructor
@@ -148,7 +148,7 @@ public class Viterbi
 		// sets default probabilities
 		for (int j = 0; j < numPOS; j++)
 		{
-		    probability[j] = Float.MIN_VALUE;
+		    probability[j] = Float.NEGATIVE_INFINITY;
 		}
 		
 		// gets actual probabilities
@@ -176,7 +176,7 @@ public class Viterbi
 		// sets default probabilities
 		for (int j = 0; j < numPOS; j++)
 		{
-		    p_transmission[i][j] = Float.MIN_VALUE;
+		    p_transmission[i][j] = Float.NEGATIVE_INFINITY;
 		}
 		
 		// gets actual probabilities
@@ -414,56 +414,124 @@ public class Viterbi
 	  int[][] parts = new int[numPOS][length]; // parts of speech fo the words
 
 	  // variables for looping below
-	  float value;
-	  int index;
-	  float[] emission;
-	  String word;
+	  float value; // current value
+	  int index; // index of the previous word for the maximum of value
+	  float[] emission; // tmp variable for emission probabilities
+	  String word; 
+	  float vtmp;
+	  boolean allneg; // if all the values for a part of speech are negative infinity
 
+	  // iterates over all possible words
 	  for (int i = 0; i < length; i++) // per word
-	  {
-	      word = results.get(i).trim().toLowerCase();
-	      if(! p_emission.containsKey(word))
-	      {
-		  for (int j = 0; j < numPOS; j++)
-		      probs[j][i] = Float.MIN_VALUE;
+	  {    
+		// trims any zeros, decapalizes for matching
+		word = results.get(i).trim().toLowerCase();
+	       	
+		// sets allneg back to true
+		allneg = true;
 
-		  index = POS.get_default().getIndex();
-		  parts[index][i] = index;
-		  probs[index][i] = 0; 
-	      }
-	      else
-	      {
-		  emission = p_emission.get(word);
-		  for (int j = 0; j < numPOS; j++) // per possible POS assignment
-	          {  
-		      value = Float.MIN_VALUE;
-		      index = 0;
-		      
-		      for (int k = 0; k < numPOS; k++) // per previous possible assignment
-		      {
-			  if (p_transmission[k][j] + emission[k] > value)
-			  {
-			      value = p_transmission[k][j] + emission[k];
-			      index = k;
-			  }
-		      }
-		      parts[j][i] = index;
-		      probs[j][i] = value;
-		  }
-	      }
+		// if the dictionary does not contain the word, sets a default
+		if(! p_emission.containsKey(word))
+	      	{
+			index = 0;
+			value = Float.NEGATIVE_INFINITY;
+
+			// find index of largest value before this
+			if (i > 0)
+			{
+				index = maxInRowIndex(probs, i-1, numPOS);
+				value = probs[index][i-1];
+			}
+
+			// set all other probabilities really small find previous index
+			for (int j = 0; j < numPOS; j++)
+			{
+		      		probs[j][i] = value;
+				parts[j][i] = index;
+			} 
+	      	}
+		// if the word is in our dictionary
+	      	else	
+	      	{
+			// get the table of emission values
+			emission = p_emission.get(word);
+			
+			// loop over all possible POS assigments
+		  	for (int j = 0; j < numPOS; j++)
+	          	{
+		      		value = Float.NEGATIVE_INFINITY;
+		      		index = 0;
+		      		
+				// loop over all possible POS assignments for the previous word
+		      		for (int k = 0; k < numPOS; k++) 
+		      		{
+					if (i > 0)
+						vtmp = probs[k][i-1] + p_transmission[k][j] + emission[j];
+					else
+						vtmp = emission[j];
+
+			  		if (vtmp > value)
+			  		{
+			      			value = vtmp;
+			      			index = k;
+			  		}
+		      		}
+
+				// set values in tables
+				if (value > Float.NEGATIVE_INFINITY)
+					System.out.println(word + " " + value + " / ");
+				if (value > Float.NEGATIVE_INFINITY)
+					allneg = false;
+				parts[j][i] = index;
+		      		probs[j][i] = value;
+		  	}
+
+			// if all possible parts of speech have value negative infinity
+			if (allneg)
+			{
+				index = maxInRowIndex(probs, i-1, numPOS);
+				value = probs[index][i-1];
+
+				for (int j = 0; j < numPOS; j++)
+				{
+					probs[j][i] = value + emission[j];
+					parts[j][i] = index;
+				}
+			}
+	      	}
 	  }
 	  
+	  // find the most likely part of speech for the last word
 	  int POSIndex = 0;
-	  for (int i = 0; i < length; i++)
-	      if (probs[numPOS-1][i] > probs[POSIndex][i])
+	  for (int i = 1; i < numPOS; i++)
+	      if (probs[i][length-1] > probs[i-1][length-1])
 		  POSIndex = i;
 
 	  return create_for_parse(results, probs, parts, length-1, POSIndex);
-      }
+      	}
 
-    /**
-     * Helper method for parse. 
-     */
+	/** 
+	 * Helper method for parse
+	 * Find the index of the maximum value on a given column of an array
+	 */
+    	private int maxInRowIndex(float[][] array, int index2, int size1)
+	{
+		float value = Float.NEGATIVE_INFINITY;
+		int index = 0;
+
+		for (int i = 0; i < size1; i++)
+			if (array[i][index2] > value)
+			{
+				index = i;
+				value = array[i][index2];
+			}
+
+		return index;
+	}
+
+    	/**
+     	* Helper method for parse. 
+     	*/
     private ArrayList<Pair<String, POS>> create_for_parse(ArrayList<String> words, float[][] probs, 
 							  int[][] parts, int wIndex, int pIndex)
     {
