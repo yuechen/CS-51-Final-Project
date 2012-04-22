@@ -409,12 +409,70 @@ public class Viterbi
      */
     public ArrayList<Pair<String, POS>> parse(ArrayList<String> results)
       {
-	  int length = results.size();
-	  ArrayList<Pair<String, POS>> sentence = new ArrayList<Pair<String,POS>>();
+	  int length = results.size(); // number of pieces of the sentence
+	  float[][] probs = new float[numPOS][length]; // probability table
+	  int[][] parts = new int[numPOS][length]; // parts of speech fo the words
 
-	  for(int i = 0; i < length; i++)
-	      sentence.add(new Pair<String, POS>(results.get(i), POS.getPOSbyIndex(0)));
+	  // variables for looping below
+	  float value;
+	  int index;
+	  float[] emission;
+	  String word;
 
-	  return sentence;
+	  for (int i = 0; i < length; i++) // per word
+	  {
+	      word = results.get(i).trim().toLowerCase();
+	      if(! p_emission.containsKey(word))
+	      {
+		  for (int j = 0; j < numPOS; j++)
+		      probs[j][i] = Float.MIN_VALUE;
+
+		  index = POS.get_default().getIndex();
+		  parts[index][i] = index;
+		  probs[index][i] = 0; 
+	      }
+	      else
+	      {
+		  emission = p_emission.get(word);
+		  for (int j = 0; j < numPOS; j++) // per possible POS assignment
+	          {  
+		      value = Float.MIN_VALUE;
+		      index = 0;
+		      
+		      for (int k = 0; k < numPOS; k++) // per previous possible assignment
+		      {
+			  if (p_transmission[k][j] + emission[k] > value)
+			  {
+			      value = p_transmission[k][j] + emission[k];
+			      index = k;
+			  }
+		      }
+		      parts[j][i] = index;
+		      probs[j][i] = value;
+		  }
+	      }
+	  }
+	  
+	  int POSIndex = 0;
+	  for (int i = 0; i < length; i++)
+	      if (probs[numPOS-1][i] > probs[POSIndex][i])
+		  POSIndex = i;
+
+	  return create_for_parse(results, probs, parts, length-1, POSIndex);
       }
+
+    /**
+     * Helper method for parse. 
+     */
+    private ArrayList<Pair<String, POS>> create_for_parse(ArrayList<String> words, float[][] probs, 
+							  int[][] parts, int wIndex, int pIndex)
+    {
+	if (wIndex < 0)
+	    return new ArrayList<Pair<String,POS>>();
+	
+	ArrayList<Pair<String,POS>> sentence = 
+	    create_for_parse(words, probs, parts, wIndex-1, parts[pIndex][wIndex]);
+	sentence.add(new Pair<String, POS>(words.get(wIndex), POS.getPOSbyIndex(pIndex)));
+	return sentence;
+    }
 }

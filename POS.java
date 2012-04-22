@@ -48,6 +48,14 @@ public class POS
     /** HashMap of gIndices to descriptions of parts of speech. */
     private static HashMap<Integer, String> gIndexTogName = new HashMap<Integer, String>();
 
+    /**
+     * Returns the default POS for objects not found in the dictionary
+     */
+    public static POS get_default()
+    {
+	   return indexToPOS.get(0);
+    } 
+
     /** 
      * Constructs the POS object with the data provided the constructor.
      * @param symbol text literal representing POS, as defined by corpus
