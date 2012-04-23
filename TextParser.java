@@ -10,7 +10,7 @@ public class TextParser
 	/**
 	* <code>input</code> String holds initial block of text.
 	*/
-	private static String input;
+	private String input;
 	
 	/**
 	* <code>viterbi</code> initializes the Viterbi object.
@@ -21,7 +21,7 @@ public class TextParser
 	* <code>sentlist</code> ArrayList holds resulting list of sentences,
 	* which are ArrayLists of words.
 	*/
-	private static ArrayList<ArrayList<Pair<String, POS>>> sentlist =
+	private ArrayList<ArrayList<Pair<String, POS>>> sentlist =
 		new ArrayList<ArrayList<Pair<String, POS>>>();
 	
 	/**
@@ -40,7 +40,7 @@ public class TextParser
 	* @param text input block of text
 	* @return list of pairs of Strings and parts of speech
 	*/
-	public static ArrayList<ArrayList<Pair<String, POS>>> parse(String text)
+	public ArrayList<ArrayList<Pair<String, POS>>> parse(String text)
    {
 		//add whitespace to the end so last punctuation mark is not neglected
 		input = text + " ";
