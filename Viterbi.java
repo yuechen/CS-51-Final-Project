@@ -221,7 +221,8 @@ public class Viterbi
 					      String saveLocation) throws WrongFormatException
     {
 	int numWords = 0;
-
+	
+	// load all of the corpus tags from the corpus_tagset
 	try
     {
 	   	POS.loadFromFile (tagset, gtagset);
@@ -251,14 +252,17 @@ public class Viterbi
 	/* One dimension array of number of times each POS appears in the corpus */
 	int[] pos_frequencies = new int[numPOS];
 
+	// Find all corpus data files in directory
 	File dir = new File(corpusDirectory);
 	File[] fl = dir.listFiles();
-	    
+	
+	// If none, error
 	if (fl == null) {
 	   	System.out.println ("Directory not valid.");
 	   	System.exit(1);
 	}
 
+	// Begin reading from corpus files
 	Scanner scanner;
 	    
 	for (int i = 0; i < fl.length; i++)
@@ -269,15 +273,18 @@ public class Viterbi
 	    {
 		    scanner = new Scanner(new BufferedReader(new FileReader(fl[i])));
         	
+        	// scan through file
 		    while (scanner.hasNext()) 
 	    	{
 			    String s = scanner.next();
-            		
+            	
+            	// figure out word/symbol combinations
 			    int lastIndex = s.lastIndexOf("/");
 			    String word = s.substring(0, lastIndex).toLowerCase();
 			    String symbol = s.substring(lastIndex + 1).
                 		replaceAll(POS.getIgnoreRegex(), "");
-                	
+                		
+                // get the index of the POS, if none, error
 			    try 
 			    {
                 	POSIndex = POS.getIndexBySymbol(symbol);
@@ -318,10 +325,12 @@ public class Viterbi
         } 
 	    catch (Exception e)
 		{
+			// better error handling, but for now, exit program
 		    System.exit(1);
 		}
 	    finally 
         {
+        	// close file
 		    if (scanner != null)
 		    {
                 	scanner.close();
