@@ -1,4 +1,5 @@
 import java.util.*;
+import java.lang.*;
 
 /**
  * Contains the text parser.
@@ -16,13 +17,6 @@ public class TextParser
 	* <code>viterbi</code> initializes the Viterbi object.
 	*/
 	private Viterbi viterbi;
-		
-	/**
-	* <code>sentlist</code> ArrayList holds resulting list of sentences,
-	* which are ArrayLists of words.
-	*/
-	private ArrayList<ArrayList<Pair<String, POS>>> sentlist =
-		new ArrayList<ArrayList<Pair<String, POS>>>();
 	
 	/**
 	* Constructor initializes input variable to an empty string, 
@@ -31,7 +25,6 @@ public class TextParser
 	public TextParser(Viterbi v)
 	{
 	 	input = "";
-		sentlist = null;
 		viterbi = v;
 	}
 		
@@ -42,6 +35,13 @@ public class TextParser
 	*/
 	public ArrayList<ArrayList<Pair<String, POS>>> parse(String text)
    {
+		/*
+		* sentlist ArrayList holds resulting list of sentences,
+		* which are ArrayLists of words.
+		*/
+		ArrayList<ArrayList<Pair<String, POS>>> sentlist =
+			new ArrayList<ArrayList<Pair<String, POS>>>();
+	
 		//add whitespace to the end so last punctuation mark is not neglected
 		input = text + " ";
 		
@@ -69,11 +69,22 @@ public class TextParser
 			wordarray[i] =
 				apsentarray[i].split("((?<=(([.?!,:;\"]|\\s+)))|(?=(([.?!,:;\"]|\\s+))))");
 			
+			for(int j = 0; j < wordarray[i].length; j++)
+			{
+				if (wordarray[i][j].equals(" ") && j < wordarray[i].length - 1)
+					wordarray[i][j+1] = " " + wordarray[i][j+1];
+				else if (wordarray[i][j].equals(" "))
+					wordarray[i][j-1] = wordarray[i][j-1] + " ";
+			}
+			
 			//add words to wordlist ArrayList
 			ArrayList<String> wordlist = new ArrayList<String>();
 			for (int j = 0; j < wordarray[i].length; j++)
 			{
-				wordlist.add(wordarray[i][j]);
+				if (wordarray[i][j].equals(" "))
+					continue;
+				else
+					wordlist.add(wordarray[i][j]);
 			}
 		   
 			//add wordlist Arraylist as a sentence element to sentlist ArrayList

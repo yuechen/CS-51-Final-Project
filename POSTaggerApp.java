@@ -1,4 +1,4 @@
-package tagger;
+import java.util.ArrayList;
 
 // add import statements as necessary
 
@@ -8,10 +8,5 @@ package tagger;
 class POSTaggerApp {
     public static void main(String[] args) 
     {
-        // code here
-    }
-
-    // may need to be chnaged to a class to allow for changing
-    // based on the file loaded
-    public enum POS{NOUN, VERB}
+	 }
 }
