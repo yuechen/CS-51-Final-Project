@@ -25,21 +25,21 @@ public class POS
     /** symbol (in tagged corpus) of each part of speech */
     private String symbol;
 
-    /** name of a part of speech, such as "noun" or "adjective"*/
+    /** name of a part of speech, such as "the verb to be"*/
     private String name;
+    
+    /** general name of the part of speech, such as "noun" or "adjective" or "verb" */
+    private String gName;
     
     /** regex of the tags to ignore when reading corpus */
     private static String ignoreRegex = "";
 
-    /** hashMap of symbols to indices */
+    /** HashMap of symbols to indices */
     private static HashMap<String, Integer> symbolToIndex = new HashMap<String, Integer>();
 
     /** ArrayList of all the existing <code>POS</code> objects, indexed by the
      * indicies of the <code>POS</code> objects*/
     private static ArrayList<POS> indexToPOS = new ArrayList<POS>();
-    
-    /** HashMap of gIndices to descriptions of parts of speech. */
-    private static HashMap<Integer, String> gIndexTogName = new HashMap<Integer, String>();
 
     /**
      * Returns the default POS for objects not found in the dictionary
@@ -55,11 +55,12 @@ public class POS
      * @param name text literal representing the name of a part of speech
      * @return none
      */
-    private POS (String symbol, String name, int gIndex)
+    private POS (String symbol, String name, int gIndex, String gName)
     {
 		this.symbol = symbol;
 		this.name = name;
 		this.gIndex = gIndex;
+		this.gName = gName;
 		this.index = indexToPOS.size();
     }
     
@@ -104,7 +105,7 @@ public class POS
      * @return general POS name of the POS
      */
     public String getgName() {
-    	return gIndexTogName.get(this.gIndex);
+    	return gName;
     }
 
     /**
@@ -173,7 +174,7 @@ public class POS
      * @return none
      */
     public static void loadFromFile (String tagset, String gtagset)
-    	throws IOException, WrongFormatException
+    	throws IOException, WrongFormatException, POSNotFoundException
     {
 		// deal with gtagset
 		
@@ -182,7 +183,7 @@ public class POS
 		 */
 		Scanner s = null;
 		HashMap<String, Integer> symbolTogIndex = new HashMap<String, Integer>();
-		gIndexTogName.clear();
+		HashMap<Integer, String> gIndexTogName = new HashMap<Integer, String>();
 		
 		try
 		{
@@ -274,7 +275,10 @@ public class POS
 				if (pair.length != 2)
 					throw new WrongFormatException();
 				
-                p = new POS (pair[0], pair[1], symbolTogIndex.get(pair[0]));
+				if (!symbolTogIndex.containsKey(pair[0]))
+					throw new POSNotFoundException();
+				int gIndex = symbolTogIndex.get(pair[0]);
+                p = new POS (pair[0], pair[1], gIndex, gIndexTogName.get(gIndex));
                 
                 indexToPOS.add (p);
 				symbolToIndex.put (p.getSymbol(), p.getIndex());
