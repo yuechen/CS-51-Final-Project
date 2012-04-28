@@ -71,10 +71,16 @@ public class TextParser
 			
 			for(int j = 0; j < wordarray[i].length; j++)
 			{
-				if (wordarray[i][j].equals(" ") && j < wordarray[i].length - 1)
-					wordarray[i][j+1] = " " + wordarray[i][j+1];
-				else if (wordarray[i][j].equals(" "))
-					wordarray[i][j-1] = wordarray[i][j-1] + " ";
+				if ((wordarray[i][j].equals(" ") || wordarray[i][j].equals("\n"))&& j < wordarray[i].length - 1)
+				{
+					String s = wordarray[i][j];
+					wordarray[i][j+1] = s + wordarray[i][j+1];
+				}
+				else if (wordarray[i][j].equals(" ") || wordarray[i][j].equals("\n"))
+				{
+					String s = wordarray[i][j];
+					wordarray[i][j-1] = wordarray[i][j-1] + s;
+				}
 			}
 			
 			//add words to wordlist ArrayList
