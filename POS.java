@@ -71,6 +71,15 @@ public class POS
     {
 		return index;
     }
+    
+    /**
+     * Gets the POS gIndex of the POS object
+     * @return general POS index
+     */
+    public int getgIndex ()
+    {
+		return gIndex;
+    }
 
     /**
      * Gets the symbol, as defined by the corpus tagset, of the POS object
@@ -88,6 +97,14 @@ public class POS
     public String getName ()
     {
 		return name;
+    }
+    
+    /**
+     * Gets the general POS name, as defined by the corpus_simple_tagset.
+     * @return general POS name of the POS
+     */
+    public String getgName() {
+    	return gIndexTogName.get(this.gIndex);
     }
 
     /**
@@ -107,16 +124,6 @@ public class POS
     public static String getIgnoreRegex ()
     {
 		return ignoreRegex;
-    }
-    
-    /**
-      * Gets the description of a general part of speech, given the gIndex.
-      * @param gIndex the index of the general part of speech
-      * @return name of the general part of speech
-      */
-    public static String getgName(int gIndex)
-    {
-    	return gIndexTogName.get(gIndex);
     }
 
     /**
