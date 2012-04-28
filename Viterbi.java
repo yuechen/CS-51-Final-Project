@@ -97,7 +97,7 @@ public class Viterbi
      * @return none
      */
     public Viterbi(String tagset, String gtagset, String datafile) 
-    	throws WrongFormatException
+    	throws WrongFormatException, POSNotFoundException
     {
 	// tries to load the tagset
 	try
@@ -218,8 +218,9 @@ public class Viterbi
      */
     public static void loadCorpusForTraining (String tagset, String gtagset,
 					      String corpusDirectory,
-					      String saveLocation) throws WrongFormatException
-    {
+					      String saveLocation)
+					      throws WrongFormatException, POSNotFoundException    
+	{
 	int numWords = 0;
 	
 	// load all of the corpus tags from the corpus_tagset

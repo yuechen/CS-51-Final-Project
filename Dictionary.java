@@ -23,10 +23,11 @@ public class Dictionary {
      */
 	public Dictionary (String dictionaryFile)
     {
+    	Scanner s = null;
     	try 
     	{
     		// begin scanning through file
-	    	Scanner s = new Scanner(new BufferedReader(new FileReader(dictionaryFile)));
+	    	s = new Scanner(new BufferedReader(new FileReader(dictionaryFile)));
 	    	String word = "";
 	    	String def = "";
 	    	String line = "";

@@ -26,6 +26,6 @@ class POSTaggerApp {
    			} 		
 			}
 		}
-		catch(WrongFormatException E) {System.out.println("Error");}
+		catch(Exception E) {System.out.println("Error");}
     }
 }
