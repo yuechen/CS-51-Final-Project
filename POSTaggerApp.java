@@ -111,10 +111,13 @@ class POSTaggerApp {
 			
 				int compared = 0;
 				int correct = 0;
+				
+				System.out.println ("WHEE:" + parsed.size());
+				System.out.println ("WHEE1:" + parsed.get(0).size());
 			
 				for (int j = 0; j < parsed.size(); j++) {
 				    for (int k = 0; k < parsed.get(j).size(); k++) {
-					System.out.println(parsed.get(j).get(k).get_first());
+					System.out.println(parsed.get(j).get(k).get_first().equals(""));
 					/*if (parsed.get(j).get(k).get_second().getIndex() == PIndices.get(compared))
 					    correct++;*/
 					compared++;
