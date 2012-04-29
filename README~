@@ -10,13 +10,25 @@ java POSTaggerApp
 (NOTE: The tagger only tags complete, i.e. period-terminated, sentences. 
 Trailing words will not be tagged.)
 
-To test accuracy using the current corpus, dtatfile, tagset, and simplified tagset
+To test accuracy using the current datafile, tagset, and simplified tagset
 in the folder, run:
-java POSTaggerApp test
+java POSTaggerApp test <directoryname>
 
 To view parts of speech without the GUI, run:
-java POSTaggerApp view and then some text here that you want to see tagged.
+java POSTaggerApp view <and then some text here that you want to see tagged.>
 (NOTE: the text to be tagged must be period-terminated.)
 
------ DEFAULT FILE NAMES -----
+To create a datafile from the command line, run:
+java POSTaggerApp compute <tagset location> <simple tagset location> <corpus directory> <datafile save location>
 
+----- DEBUGGING -----
+In particular, the corpus directory may NOT contain any non-corpus files, which will causes errors upon running.
+
+For Mac OS users, the Mac finder has the tendency to create a file called ".DS_Store" in the corpus
+directory, which has caused problems. If this is the case, remove the file manually and try again.
+
+----- DEFAULT FILE NAMES -----
+datafile.txt : The file of compiled probabilities
+
+
+/corpus : a directory containing the Brown Corpus 
