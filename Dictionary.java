@@ -47,7 +47,7 @@ public class Dictionary {
 			    	dict.put(word, def);
 			    	
 			    	// begin processing for next term
-		    		word = line.trim();
+		    		word = line.trim().toLowerCase();
 		    		def = s.nextLine();
         		}
         		else
@@ -78,9 +78,9 @@ public class Dictionary {
      * @return the definition of the term, if found.
      	Otherwise, returns "No definition found."
      */
-    public String lookup (String word) {
-    	word = word.trim().toLowerCase();
-	if (dict.containsKey(word))
+    public String lookup (String word)
+    {
+    	if (dict.containsKey(word.toLowerCase()))
     		return dict.get(word);
     	else
     		return "No definition found.";
