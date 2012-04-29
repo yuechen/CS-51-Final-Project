@@ -31,6 +31,9 @@ public class POS
     
     /** regex of the tags to ignore when reading corpus */
     private static String ignoreRegex = "";
+    
+    /** number of gIndices */
+    private static int numgIndices = 0;
 
     /** HashMap of symbols to indices */
     private static HashMap<String, Integer> symbolToIndex = new HashMap<String, Integer>();
@@ -113,6 +116,15 @@ public class POS
     public static int numPOS ()
     {
 		return indexToPOS.size();
+    }
+    
+    /**
+     * Gets the number of parts of speech defined by the corpus tagset
+     * @return number of parts of speech
+     */
+    public static int numgIndices ()
+    {
+		return numgIndices;
     }
     
     /**
@@ -225,6 +237,9 @@ public class POS
 			if (s != null)
                 s.close();
 		}
+		
+		// store the number of gIndices
+		numgIndices = gIndexTogName.size();
 		
 		// deal with tagset
     	indexToPOS.clear();
