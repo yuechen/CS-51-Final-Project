@@ -41,7 +41,7 @@ class POSTaggerApp {
 			TextParser parser = new TextParser(v);
 		
 			// test
-			test (v, args[0]);
+			test (v, args[1]);
 	    	}
 		catch(Exception E) {System.out.println(E.getMessage());}
 	}

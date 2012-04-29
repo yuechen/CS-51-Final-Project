@@ -74,7 +74,7 @@ class Thesaurus {
 
 	// get rid of spaces and capitalization
 	word = word.trim().toLowerCase();
-	int length = word.length;
+	int length = word.length();
 	String response = "";
 	
 	// checks original form
@@ -85,20 +85,20 @@ class Thesaurus {
 	// checks for pluralizations
 	if (length > 0 && word.charAt(length - 1) == 's')
 	{
-		value = map.get(word.subString(0,length-1));
+		value = map.get(word.substring(0,length-1));
 		if (value != null && !value.isEmpty())
-			response += value + br;
+			response += value;
 		
 		if (length > 1 && word.charAt(length-2) == 'e')
 		{
-			value = map.get(word.subString(0, length-2));
+			value = map.get(word.substring(0, length-2));
 			if (value != null && !value.isEmpty())
-				response += value + br;
+				response += value;
 		}
 	}
 
 	if (!response.isEmpty())
-	    return response;
+	    return response.trim();
 	else
 	    return "No synonyms found.";
     }

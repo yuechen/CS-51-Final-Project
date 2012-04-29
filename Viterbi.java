@@ -387,14 +387,22 @@ public class Viterbi
 			{
 				index = maxInRowIndex(probs, i-1, numPOS);
 				value = probs[index][i-1];
+	
+				// set all other probabilities really, find previous index
+				for (int j = 0; j < numPOS; j++)
+				{
+		      			probs[j][i] = value;
+					parts[j][i] = index;
+				}
 			}
-
-			// set all other probabilities really small find previous index
-			for (int j = 0; j < numPOS; j++)
+			else
 			{
-		      		probs[j][i] = value;
-				parts[j][i] = index;
-			} 
+				for (int j = 0; j < numPOS; j++)
+				{
+					probs[j][i] = 0;
+					parts[j][i] = 0;
+				}
+			}	
 	      	}
 		// if the word is in our dictionary
 	      	else	
