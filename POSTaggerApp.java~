@@ -32,7 +32,7 @@ class POSTaggerApp {
 		System.out.println("GUI intialization goes here");
 
 	// for testing
-	else if (args[0] == "test")
+	else if (args[0].compareTo("test") == 0)
 	{
 		try
 	    	{
@@ -41,13 +41,13 @@ class POSTaggerApp {
 			TextParser parser = new TextParser(v);
 		
 			// test
-			test (v);
+			test (v, args[0]);
 	    	}
 		catch(Exception E) {System.out.println(E.getMessage());}
 	}
 	
 	// for viewing parts of speech associated with remaining test
-	else if (args[0] == "view")
+	else if (args[0].compareTo("view") == 0)
 	{try {
 		// creates the sentence
 		String sent = "";
@@ -65,7 +65,7 @@ class POSTaggerApp {
 		ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse(sent);
      		
 		// printing out
-		System.out.println("Parsed text:")
+		System.out.println("Parsed text:");
 		for(int i = 0 ; i < parsed.size(); i++)
 		{
 			for(int j = 0; j < parsed.get(i).size(); j++)
@@ -81,11 +81,12 @@ class POSTaggerApp {
     /**
      * Tests the accuracy of the Viterbi algorithm against a pre-tagged data set
      * @param viterbi A viterbi object loaded with probabilities. 
+     * @param directory The directory of the files to be tested, with pre-tagged parts of speech.
      */
-    private static void test (Viterbi viterbi) throws FileNotFoundException, POSNotFoundException
+    private static void test (Viterbi viterbi, String directory) throws FileNotFoundException, POSNotFoundException
     {
 		// Find all corpus data files in directory
-		File dir = new File("corpus");
+		File dir = new File(directory);
 		File[] fl = dir.listFiles();
 
 		// If none, error

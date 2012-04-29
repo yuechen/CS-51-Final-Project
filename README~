@@ -10,16 +10,13 @@ java POSTaggerApp
 (NOTE: The tagger only tags complete, i.e. period-terminated, sentences. 
 Trailing words will not be tagged.)
 
-To test accuracy using the current datafile, tagset, and simplified tagset
+To test accuracy using the current corpus, dtatfile, tagset, and simplified tagset
 in the folder, run:
-java POSTaggerApp test directoryname
+java POSTaggerApp test
 
 To view parts of speech without the GUI, run:
 java POSTaggerApp view and then some text here that you want to see tagged.
 (NOTE: the text to be tagged must be period-terminated.)
 
 ----- DEFAULT FILE NAMES -----
-datafile.txt : The file of compiled probabilities
 
-
-/corpus : a directory containing the Brown Corpus 

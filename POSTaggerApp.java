@@ -41,7 +41,7 @@ class POSTaggerApp {
 			TextParser parser = new TextParser(v);
 		
 			// test
-			test (v);
+			test (v, args[0]);
 	    	}
 		catch(Exception E) {System.out.println(E.getMessage());}
 	}
@@ -76,16 +76,28 @@ class POSTaggerApp {
 	}	
 	catch(Exception E) {System.out.println(E.getMessage());}
 	}
+	
+	else if (args[0].compareTo("compute") == 0)
+	{
+		if (length == 5)
+		{
+			try {Viterbi.loadCorpusForTraining(args[1], args[2], args[3], args[4]);}
+			catch(Exception E) {System.out.println(E.getMessage());}
+		}
+		else
+			System.out.println("Incorrect number of arguments.");
+	}
     }
     
     /**
      * Tests the accuracy of the Viterbi algorithm against a pre-tagged data set
      * @param viterbi A viterbi object loaded with probabilities. 
+     * @param directory The directory of the files to be tested, with pre-tagged parts of speech.
      */
-    private static void test (Viterbi viterbi) throws FileNotFoundException, POSNotFoundException
+    private static void test (Viterbi viterbi, String directory) throws FileNotFoundException, POSNotFoundException
     {
 		// Find all corpus data files in directory
-		File dir = new File("corpus");
+		File dir = new File(directory);
 		File[] fl = dir.listFiles();
 
 		// If none, error
