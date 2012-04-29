@@ -6,6 +6,7 @@
 import java.awt.Color;
 import java.awt.Point;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -17,12 +18,33 @@ import javax.swing.text.*;
  * @author Billy
  */
 public class TextEditor extends javax.swing.JFrame {
+    
+    private Viterbi v;
+    private TextParser parser;
+    private Dictionary d;
+    private Thesaurus th;
 
     /**
      * Creates new form TextEditor
      */
     public TextEditor() {
         initComponents();
+        System.out.println("Components initialized.");
+        
+    }
+    
+    public void InitializeStuff() {
+        boolean inited = false;
+        while (!inited) {
+            try {
+                v = new Viterbi("corpus_tagset.txt", "corpus_simple_tagset.txt", "datafile.txt");
+                parser = new TextParser(v);
+                d = new Dictionary("webster_dictionary.txt");
+                th = new Thesaurus("thesaurus.txt");
+            } catch (    FileNotFoundException | WrongFormatException | POSNotFoundException ex) {
+                Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     /**
@@ -43,8 +65,8 @@ public class TextEditor extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         taggedTextPane = new javax.swing.JTextPane();
         jPanel3 = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        legendText = new javax.swing.JTextPane();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         dictionaryText = new javax.swing.JTextArea();
@@ -90,7 +112,7 @@ public class TextEditor extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane2)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 418, Short.MAX_VALUE)
                         .addComponent(tagButton)))
                 .addContainerGap())
         );
@@ -107,7 +129,6 @@ public class TextEditor extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Tagged Text"));
 
         taggedTextPane.setEditable(false);
-        taggedTextPane.setText("Test test test.");
         taggedTextPane.setName("");
         taggedTextPane.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -122,28 +143,20 @@ public class TextEditor extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Legend"));
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "POS 1", "POS 2", "POS 3" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jList1.setFocusable(false);
-        jList1.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        jList1.setSelectionForeground(new java.awt.Color(86, 86, 86));
-        jScrollPane5.setViewportView(jList1);
+        jScrollPane6.setViewportView(legendText);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -151,14 +164,14 @@ public class TextEditor extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                .addComponent(jScrollPane6)
                 .addContainerGap())
         );
 
@@ -167,8 +180,8 @@ public class TextEditor extends javax.swing.JFrame {
         dictionaryText.setColumns(20);
         dictionaryText.setEditable(false);
         dictionaryText.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+        dictionaryText.setLineWrap(true);
         dictionaryText.setRows(5);
-        dictionaryText.setText("testes test ");
         dictionaryText.setBorder(null);
         jScrollPane3.setViewportView(dictionaryText);
 
@@ -178,14 +191,14 @@ public class TextEditor extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addComponent(jScrollPane3)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -210,7 +223,7 @@ public class TextEditor extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                .addComponent(jScrollPane4)
                 .addContainerGap())
         );
 
@@ -290,14 +303,16 @@ public class TextEditor extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -306,11 +321,11 @@ public class TextEditor extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -347,7 +362,11 @@ public class TextEditor extends javax.swing.JFrame {
             int pos = taggedTextPane.viewToModel(pt);
             int start = Utilities.getWordStart(taggedTextPane, pos);
             int end = Utilities.getWordEnd(taggedTextPane, pos);
-            dictionaryText.setText(taggedTextPane.getText(start, end-start));
+            String dictWord = taggedTextPane.getText(start, end-start);
+            thesaurusText.setText(th.lookup(dictWord));
+            dictionaryText.setText(dictWord.toUpperCase() + "\n\n" + d.lookup(dictWord));
+            thesaurusText.setCaretPosition(0);
+            dictionaryText.setCaretPosition(0);
             StyledDocument doc = taggedTextPane.getStyledDocument();
             Style style = taggedTextPane.addStyle("bgh", null);
             StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
@@ -358,8 +377,8 @@ public class TextEditor extends javax.swing.JFrame {
                 style = taggedTextPane.addStyle(getColor(i), null);
                 StyleConstants.setForeground(style, Color.decode(getColor(i)));
             }
-            doc.setCharacterAttributes(0, doc.getLength(), taggedTextPane.getStyle("bg"), true);
-            doc.setCharacterAttributes(start, end-start, taggedTextPane.getStyle("bgh"), true);
+            doc.setCharacterAttributes(0, doc.getLength(), taggedTextPane.getStyle("bg"), false);
+            doc.setCharacterAttributes(start, end-start, taggedTextPane.getStyle("bgh"), false);
         } catch (BadLocationException ex) {
             Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -456,30 +475,38 @@ public class TextEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_menuHelpActionPerformed
 
     private void tagButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagButtonActionPerformed
-        Style style = taggedTextPane.addStyle(getColor(0), null);
-        StyleConstants.setBackground(style, Color.decode(getColor(0)));
-        style = taggedTextPane.addStyle(getColor(0)+"_bg", style);
-        StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
-        for (int i=1; i<15; i++)
-        {
-            style = taggedTextPane.addStyle(getColor(i), null);
-            StyleConstants.setForeground(style, Color.decode(getColor(i)));
-            style = taggedTextPane.addStyle(getColor(i)+"_bg", style);
+        try {
+            Style style = taggedTextPane.addStyle(getColor(0), null);
+            StyleConstants.setForeground(style, Color.decode(getColor(0)));
+            style = taggedTextPane.addStyle(getColor(0)+"_bg", style);
             StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
-        }
-        
-        taggedTextPane.setText("");
-        sentenceList = parser.parse(textEditorPane.getText());
-        for (int i=0; i<sentenceList.size(); i++) {
-            for (int j=0; j<sentenceList.get(i).size(); j++) {
-                StyledDocument doc = taggedTextPane.getStyledDocument();
-                doc.insertString(doc.getLength(), sentenceList.get(i).get(j).get_first(),
-                        taggedTextPane.getStyle(getColor(sentenceList.get(i).get(j).get_second().gIndex)));
+            for (int i=1; i<15; i++)
+            {
+                style = taggedTextPane.addStyle(getColor(i), null);
+                StyleConstants.setForeground(style, Color.decode(getColor(i)));
+                style = taggedTextPane.addStyle(getColor(i)+"_bg", style);
+                StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
             }
+            
+            taggedTextPane.setText("");
+            ArrayList<ArrayList<Pair<String, POS>>> sentenceList = parser.parse(textEditorPane.getText());
+            for (int i=0; i<sentenceList.size(); i++) {
+                for (int j=0; j<sentenceList.get(i).size(); j++) {
+                    StyledDocument doc = taggedTextPane.getStyledDocument();
+                    try {
+                        doc.insertString(doc.getLength(), sentenceList.get(i).get(j).get_first(),
+                                taggedTextPane.getStyle(getColor(sentenceList.get(i).get(j).get_second().getgIndex())));
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            
+            dictionaryText.setText("");
+            thesaurusText.setText("");
+        } catch (POSNotFoundException ex) {
+            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        dictionaryText.setText("");
-        thesaurusText.setText("");
     }//GEN-LAST:event_tagButtonActionPerformed
 
     private void menuCorpusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCorpusActionPerformed
@@ -529,7 +556,6 @@ public class TextEditor extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea dictionaryText;
-    private javax.swing.JList jList1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -542,7 +568,8 @@ public class TextEditor extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JTextPane legendText;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuCorpus;
     private javax.swing.JMenu menuFile;
