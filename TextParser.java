@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.regex.Pattern;
+import java.util.ArrayList;
 import java.lang.*;
 
 /**
@@ -69,25 +70,29 @@ public class TextParser
 			wordarray[i] =
 				apsentarray[i].split("((?<=(([.?!,:;\"]|\\s+)))|(?=(([.?!,:;\"]|\\s+))))");
 			
+			//retains all white space by concatenating it to the beginning of the next word.
 			for(int j = 0; j < wordarray[i].length; j++)
 			{
-				if ((wordarray[i][j].equals(" ") || wordarray[i][j].equals("\n"))&& j < wordarray[i].length - 1)
+				if (Pattern.matches(wordarray[i][j], "\\s+") && j < wordarray[i].length - 1)
 				{
 					String s = wordarray[i][j];
 					wordarray[i][j+1] = s + wordarray[i][j+1];
 				}
-				else if (wordarray[i][j].equals(" ") || wordarray[i][j].equals("\n"))
+				
+				//if the whitespace is at the end of the sentence, concats to end of last word.
+				else if (Pattern.matches(wordarray[i][j], "\\s"))
 				{
 					String s = wordarray[i][j];
 					wordarray[i][j-1] = wordarray[i][j-1] + s;
 				}
 			}
 			
-			//add words to wordlist ArrayList
+			//add words to wordlist ArrayList,
 			ArrayList<String> wordlist = new ArrayList<String>();
 			for (int j = 0; j < wordarray[i].length; j++)
 			{
-				if (wordarray[i][j].equals(" "))
+				//skips over white space elements since already accounted for
+				if (Pattern.matches(wordarray[i][j], "\\s"))
 					continue;
 				else
 					wordlist.add(wordarray[i][j]);
