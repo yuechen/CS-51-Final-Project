@@ -92,7 +92,7 @@ public class TextParser
 			for (int j = 0; j < wordarray[i].length; j++)
 			{
 				//skips over white space elements since already accounted for
-				if (wordarray[i][j].matches("\\s+"))
+				if (wordarray[i][j].matches("\\s*"))
 				{
 					continue;
 				}
