@@ -156,6 +156,7 @@ public class TextEditor extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Legend"));
 
+        legendText.setEditable(false);
         jScrollPane6.setViewportView(legendText);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -372,11 +373,6 @@ public class TextEditor extends javax.swing.JFrame {
             StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
             style = taggedTextPane.addStyle("bg", null);
             StyleConstants.setBackground(style, Color.decode("#FFFFFF"));
-            for (int i=0; i<15; i++)
-            {
-                style = taggedTextPane.addStyle(getColor(i), null);
-                StyleConstants.setForeground(style, Color.decode(getColor(i)));
-            }
             doc.setCharacterAttributes(0, doc.getLength(), taggedTextPane.getStyle("bg"), false);
             doc.setCharacterAttributes(start, end-start, taggedTextPane.getStyle("bgh"), false);
         } catch (BadLocationException ex) {
@@ -478,14 +474,10 @@ public class TextEditor extends javax.swing.JFrame {
         try {
             Style style = taggedTextPane.addStyle(getColor(0), null);
             StyleConstants.setForeground(style, Color.decode(getColor(0)));
-            style = taggedTextPane.addStyle(getColor(0)+"_bg", style);
-            StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
             for (int i=1; i<15; i++)
             {
                 style = taggedTextPane.addStyle(getColor(i), null);
                 StyleConstants.setForeground(style, Color.decode(getColor(i)));
-                style = taggedTextPane.addStyle(getColor(i)+"_bg", style);
-                StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
             }
             
             taggedTextPane.setText("");
@@ -510,7 +502,43 @@ public class TextEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_tagButtonActionPerformed
 
     private void menuCorpusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCorpusActionPerformed
-        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser();
+        
+        boolean is_init = false;
+        while (!is_init)
+        {
+            chooser.setDialogTitle("Choose corpus");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int returnVal = chooser.showOpenDialog(null);
+
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                String corpusPath = chooser.getSelectedFile().getPath();
+                chooser.setDialogTitle("Choose tagset");
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                returnVal = chooser.showOpenDialog(null);
+
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                    String tagsetPath = chooser.getSelectedFile().getPath();
+                    chooser.setDialogTitle("Choose simple tagset");
+                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    returnVal = chooser.showOpenDialog(null);
+
+                    if(returnVal == JFileChooser.APPROVE_OPTION) {
+                        try {
+                            String simpleTagsetPath = chooser.getSelectedFile().getPath();
+                            System.out.println(tagsetPath + simpleTagsetPath + corpusPath);
+                            Viterbi.loadCorpusForTraining(tagsetPath, simpleTagsetPath, corpusPath, "datafile.txt");
+                            v = new Viterbi(tagsetPath, simpleTagsetPath, "datafile.txt");
+                            parser = new TextParser(v);
+                            is_init = true;
+                        } catch (                IOException | WrongFormatException | POSNotFoundException ex) {
+                            JOptionPane.showMessageDialog(null, "Invalid files. Please choose again.", "Error", JOptionPane.PLAIN_MESSAGE);
+                            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        }
     }//GEN-LAST:event_menuCorpusActionPerformed
 
     /**
