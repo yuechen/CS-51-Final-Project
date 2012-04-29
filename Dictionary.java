@@ -81,7 +81,7 @@ public class Dictionary {
     public String lookup (String word)
     {
     	if (dict.containsKey(word.toLowerCase()))
-    		return dict.get(word);
+    		return dict.get(word.toLowerCase());
     	else
     		return "No definition found.";
     }
