@@ -29,7 +29,11 @@ class POSTaggerApp {
 
 	// for intialization of GUI
 	if (length == 0)
-		System.out.println("GUI intialization goes here");
+        {
+                TextEditor t = new TextEditor();
+                t.setVisible(true);
+                t.InitializeStuff();
+        }
 
 	// for testing
 	else if (args[0].compareTo("test") == 0)
