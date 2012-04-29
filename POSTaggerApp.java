@@ -32,7 +32,7 @@ class POSTaggerApp {
     		Viterbi v = new Viterbi("corpus_tagset.txt", "corpus_simple_tagset.txt", "datafile.txt");
 		
 		TextParser parser = new TextParser(v);
-		System.out.println("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
+		/*System.out.println("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
 		ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
 		System.out.println("Checkpoint1\n");
     		for(int i = 0 ; i < parsed.size(); i++)
@@ -41,7 +41,7 @@ class POSTaggerApp {
 			    {
         			System.out.println(parsed.get(i).get(j).get_first() + " / " + parsed.get(i).get(j).get_second().getName());
 			    } 		
-		    }
+		    }*/
 			
 		test (parser);
 
@@ -63,7 +63,7 @@ class POSTaggerApp {
 		    System.out.println ("Directory not valid.");
 		    System.exit(1);
 		}
-			
+		
 		Scanner scanner;
 	
 		for (int i = 0; i < 1; i++)
@@ -78,15 +78,16 @@ class POSTaggerApp {
 		    
 				ArrayList<Integer> PIndices = new ArrayList<Integer>();
         	
+        	int sk = 0;
+        	
 				// scan through file
 				while (scanner.hasNext()) 
 				    {
 					String s = scanner.next();
-            	
+					         	
 					// figure out word/symbol combinations
-					int lastIndex = s.lastIndexOf("/"); // returning -1. Shouldn't be doing that. Please look into it.
-					System.out.println (lastIndex);
-					text = text + s.substring(0, lastIndex).toLowerCase();
+					int lastIndex = s.lastIndexOf("/");
+					text = text + " " + s.substring(0, lastIndex).toLowerCase();
 					String symbol = s.substring(lastIndex + 1).replaceAll(POS.getIgnoreRegex(), "");
                 		
 					// get the index of the POS, if none, error
@@ -101,6 +102,7 @@ class POSTaggerApp {
 					    }
 			    
 					PIndices.add(POSIndex);
+					sk++;
 				    }
 
 				System.out.println (text);
@@ -112,14 +114,16 @@ class POSTaggerApp {
 			
 				for (int j = 0; j < parsed.size(); j++) {
 				    for (int k = 0; k < parsed.get(j).size(); k++) {
-					if (parsed.get(j).get(k).get_second().getIndex() == PIndices.get(compared))
-					    correct++;
+					System.out.println(parsed.get(j).get(k).get_first());
+					/*if (parsed.get(j).get(k).get_second().getIndex() == PIndices.get(compared))
+					    correct++;*/
 					compared++;
+					System.out.println(compared);
 				    }
 				}
 			
 				System.out.println ("Correct: " + correct + "\t" + "Compared: " + compared);
-				System.out.println ("This sucks: " + PIndices.size());
+				System.out.println ("This sucks: " + PIndices.size() + " " + sk);
 			    }
 			finally 
 			    {
