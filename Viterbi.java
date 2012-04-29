@@ -231,7 +231,7 @@ public class Viterbi
 	// Begin reading from corpus files
 	Scanner scanner;
 	    
-	for (int i = 0; i < 250; i++)
+	for (int i = 0; i < fl.length; i++)
 	{
 	    scanner = null;
 	    	
