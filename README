@@ -37,4 +37,8 @@ corpus_simple_tagset.txt : A list mapping tags in the full tagset
 	to a smaller list of tags for highlighting 
 
 Included default files:
-/corpus : a directory containing the Brown Corpus 
+/corpus : a directory containing the Brown Corpus
+dictionary.txt : an English-language dictionary based on the one found at
+	http://www.gutenberg.org/files/29765/29765-8.txt
+thesaurus.txt: an Engligh-language thesaurus based on the one found at 
+ 	http://www.gutenberg.org/cache/epub/10681/pg10681.txt
