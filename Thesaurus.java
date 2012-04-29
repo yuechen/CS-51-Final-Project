@@ -74,25 +74,25 @@ class Thesaurus {
 
 	// get rid of spaces and capitalization
 	word = word.trim().toLowerCase();
-	length = word.length;
+	int length = word.length;
 	String response = "";
 	
 	// checks original form
 	String value = map.get(word);
-	if (value != null)
+	if (value != null && !value.isEmpty())
 		response += value + br;
 
 	// checks for pluralizations
 	if (length > 0 && word.charAt(length - 1) == 's')
 	{
 		value = map.get(word.subString(0,length-1));
-		if (value != null)
+		if (value != null && !value.isEmpty())
 			response += value + br;
 		
 		if (length > 1 && word.charAt(length-2) == 'e')
 		{
 			value = map.get(word.subString(0, length-2));
-			if (value != null)
+			if (value != null && !value.isEmpty())
 				response += value + br;
 		}
 	}
