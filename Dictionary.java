@@ -1,10 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.Iterator;
 
 public class Dictionary {
 	
@@ -21,7 +19,7 @@ public class Dictionary {
      * @param dictionaryFile the text file where the dictionary may be found.
      * @return none
      */
-	public Dictionary (String dictionaryFile)
+	public Dictionary (String dictionaryFile) throws FileNotFoundException
     {
     	Scanner s = null;
     	try 
@@ -65,24 +63,7 @@ public class Dictionary {
         
         	// remove the empty definition
 	    	dict.remove("");
-        
-        	// testing code
-        	/*
-	    	Set<String> ks = dict.keySet();
-	    	Iterator<String> i = ks.iterator();
-	    	while (i.hasNext()) {
-        		String k = i.next();
-        		if (k.equals("A-"))
-        			System.out.println (k + "\n" + dict.get(k));
-	    	}
-	    	System.out.println ("Total words: " + dict.size());
-	    	*/
-        }
-        catch (IOException e)
-        {
-        	System.out.println ("Error with file");
-        	System.exit(1);
-        }
+	    }
         finally
         {
         	// close the file

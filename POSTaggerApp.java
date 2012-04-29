@@ -35,13 +35,11 @@ class POSTaggerApp {
 		/*System.out.println("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
 		ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
 		System.out.println("Checkpoint1\n");
-=======
 			TextParser parser = new TextParser(v);
 			System.out.println(" Hey guys, I'm going for a run.\nJenny is a wonderful  person.");
 		   ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
 			System.out.println("Checkpoint1\n");
->>>>>>> master
-    		for(int i = 0 ; i < parsed.size(); i++)
+     		for(int i = 0 ; i < parsed.size(); i++)
 		    {
 			for(int j = 0; j < parsed.get(i).size(); j++)
 			    {
@@ -49,7 +47,7 @@ class POSTaggerApp {
 			    } 		
 		    }*/
 			
-		test (parser);
+		test (v);
 
 		System.out.println ("Hello, World");
 	    }
@@ -58,12 +56,12 @@ class POSTaggerApp {
 	catch (FileNotFoundException E) {System.out.println(E.getMessage());}
     }
     
-    private static void test (TextParser parser) throws FileNotFoundException
+    private static void test (Viterbi viterbi) throws FileNotFoundException, POSNotFoundException
     {
 		// Find all corpus data files in directory
 		File dir = new File("corpus");
 		File[] fl = dir.listFiles();
-	
+
 		// If none, error
 		if (fl == null) {
 		    System.out.println ("Directory not valid.");
@@ -72,30 +70,37 @@ class POSTaggerApp {
 	
 		Scanner scanner;
 	
-		for (int i = 0; i < 1; i++)
+		for (int i = 30; i < fl.length; i++)
 		    {
 			scanner = null;
 			int POSIndex = -1;
-	    	
+				    	
 			try 
 			    {
 				scanner = new Scanner(new BufferedReader(new FileReader(fl[i])));
 				String text = "";
 		    
 				ArrayList<Integer> PIndices = new ArrayList<Integer>();
-        	
-        	int sk = 0;
+				ArrayList<Pair<String, POS>> PIndices2 = new ArrayList<Pair<String, POS>>();
+				ArrayList<ArrayList<String>> sentences = 
+					new ArrayList<ArrayList<String>>();
+        		ArrayList<String> sent = new ArrayList<String>();
         	
 				// scan through file
 				while (scanner.hasNext()) 
 				    {
 					String s = scanner.next();
-					         	
+					
 					// figure out word/symbol combinations
 					int lastIndex = s.lastIndexOf("/");
-					text = text + " " + s.substring(0, lastIndex).toLowerCase();
 					String symbol = s.substring(lastIndex + 1).replaceAll(POS.getIgnoreRegex(), "");
-                		
+					sent.add(" " + s.substring(0, lastIndex).toLowerCase());
+					
+					if (symbol.equals(".") || !scanner.hasNext()) {
+						sentences.add(sent);
+						sent = new ArrayList<String>();
+					}
+                	
 					// get the index of the POS, if none, error
 					try 
 					    {
@@ -108,31 +113,26 @@ class POSTaggerApp {
 					    }
 			    
 					PIndices.add(POSIndex);
-					sk++;
 				    }
-
-				System.out.println (text);
-			
-				ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse(text);
+				
+				for (int j = 0; j < sentences.size(); j++) {
+					PIndices2.addAll(viterbi.parse(sentences.get(j)));
+				}
 			
 				int compared = 0;
 				int correct = 0;
 				
-				System.out.println ("WHEE:" + parsed.size());
-				System.out.println ("WHEE1:" + parsed.get(0).size());
-			
-				for (int j = 0; j < parsed.size(); j++) {
-				    for (int k = 0; k < parsed.get(j).size(); k++) {
-					System.out.println(parsed.get(j).get(k).get_first().equals(""));
-					/*if (parsed.get(j).get(k).get_second().getIndex() == PIndices.get(compared))
-					    correct++;*/
-					compared++;
-					System.out.println(compared);
-				    }
+				for (int j = 0; j < PIndices.size(); j++) {
+					//System.out.println (j + "\t" + PIndices.get(j) + "\t" +
+						//PIndices2.get(j).get_second().getIndex());
+				    if (PIndices.get(j) == PIndices2.get(j).get_second().getIndex())
+				    	correct++;
+				    
+				    compared++;
 				}
 			
-				System.out.println ("Correct: " + correct + "\t" + "Compared: " + compared);
-				System.out.println ("This sucks: " + PIndices.size() + " " + sk);
+				System.out.println ("Correct: " + correct + "\t" +
+					"Compared: " + compared);
 			    }
 			finally 
 			    {
@@ -144,7 +144,5 @@ class POSTaggerApp {
 			    }
     		
 		    }
-    	catch(WrongFormatException E) {System.out.println("Error");}
-		catch(POSNotFoundException E) {}
    }
 }

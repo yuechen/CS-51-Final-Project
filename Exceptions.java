@@ -4,6 +4,10 @@
  */
 class POSNotFoundException extends Exception
 {
+	public POSNotFoundException (String msg)
+	{
+		super(msg);
+	}
 }
 
 /**
@@ -11,4 +15,8 @@ class POSNotFoundException extends Exception
  */
 class WrongFormatException extends Exception
 {
+	public WrongFormatException (String msg)
+	{
+		super(msg);
+	}
 }

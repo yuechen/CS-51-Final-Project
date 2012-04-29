@@ -15,7 +15,7 @@ public class Pair<V1, V2>
     public Pair(V1 v1, V2 v2)
     {
     	value1 = v1;
-	value2 = v2;	
+		value2 = v2;	
     }
     /**
      * Returns the first element of the pair
@@ -23,7 +23,7 @@ public class Pair<V1, V2>
      */ 
     public V1 get_first()
     {
-	return value1;
+		return value1;
     }
 
     /**
@@ -32,6 +32,6 @@ public class Pair<V1, V2>
      */ 
     public V2 get_second()
     {
-	return value2;
+		return value2;
     }
 }

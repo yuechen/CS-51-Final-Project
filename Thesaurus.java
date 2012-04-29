@@ -19,9 +19,13 @@ class Thesaurus {
      */
     public Thesaurus(String file) throws FileNotFoundException
     {
+    Scanner sc = null;
+    
+    try
+    {
 	// opens scanner
 	String br = System.getProperty("line.separator");
-	Scanner sc = new Scanner(new BufferedReader(new FileReader(file)));
+	sc = new Scanner(new BufferedReader(new FileReader(file)));
 
 	// initializes map
 	map = new HashMap<String, String>();
@@ -50,8 +54,12 @@ class Thesaurus {
 		map.put(word, line);
 	    }
 
-	System.out.println("done");
-
+	}
+	finally
+	{
+		if (sc != null)
+			sc.close();
+	}	
     }
 
     /** Looks up the synonyms for a given word
@@ -64,6 +72,6 @@ class Thesaurus {
 	if (value != null)
 	    return value;
 	else
-	    return "";
+	    return "No synonyms found.";
     }
 }
