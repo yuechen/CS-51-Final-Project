@@ -80,7 +80,7 @@ public class TextParser
 				}
 				
 				//if the whitespace is at the end of the sentence, concats to end of last word.
-				else if (Pattern.matches(wordarray[i][j], "\\s"))
+				else if (Pattern.matches(wordarray[i][j], "\\s+"))
 				{
 					String s = wordarray[i][j];
 					wordarray[i][j-1] = wordarray[i][j-1] + s;
@@ -92,7 +92,7 @@ public class TextParser
 			for (int j = 0; j < wordarray[i].length; j++)
 			{
 				//skips over white space elements since already accounted for
-				if (Pattern.matches(wordarray[i][j], "\\s"))
+				if (Pattern.matches(wordarray[i][j], "\\s+"))
 					continue;
 				else
 					wordlist.add(wordarray[i][j]);
