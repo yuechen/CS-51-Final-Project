@@ -397,8 +397,11 @@ public class Viterbi
 			}
 			else
 			{
-				probs[j][i] = 0;
-				parts[j][i] = 0;
+				for (int j = 0; j < numPOS; j++)
+				{
+					probs[j][i] = 0;
+					parts[j][i] = 0;
+				}
 			}	
 	      	}
 		// if the word is in our dictionary
