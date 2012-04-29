@@ -35,6 +35,12 @@ class POSTaggerApp {
 		/*System.out.println("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
 		ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
 		System.out.println("Checkpoint1\n");
+=======
+			TextParser parser = new TextParser(v);
+			System.out.println(" Hey guys, I'm going for a run.\nJenny is a wonderful  person.");
+		   ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
+			System.out.println("Checkpoint1\n");
+>>>>>>> master
     		for(int i = 0 ; i < parsed.size(); i++)
 		    {
 			for(int j = 0; j < parsed.get(i).size(); j++)
@@ -63,7 +69,7 @@ class POSTaggerApp {
 		    System.out.println ("Directory not valid.");
 		    System.exit(1);
 		}
-		
+	
 		Scanner scanner;
 	
 		for (int i = 0; i < 1; i++)
@@ -138,5 +144,7 @@ class POSTaggerApp {
 			    }
     		
 		    }
-    }
+    	catch(WrongFormatException E) {System.out.println("Error");}
+		catch(POSNotFoundException E) {}
+   }
 }
