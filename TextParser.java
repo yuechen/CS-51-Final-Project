@@ -1,16 +1,28 @@
-import java.util.*;
+import java.util.regex.Pattern;
+import java.util.ArrayList;
 import java.lang.*;
 
+
 /**
+
  * Contains the text parser.
+
  * <br> Splits a String block of text into a linked list of sentences
+
  * in which each element is a linked list of the words in that sentence.
+
  */
+
 public class TextParser
+
 {
+
 	/**
+
 	* <code>input</code> String holds initial block of text.
+
 	*/
+
 	private String input;
 	
 	/**
@@ -18,32 +30,49 @@ public class TextParser
 	*/
 	private Viterbi viterbi;
 	
+
 	/**
+
 	* Constructor initializes input variable to an empty string, 
 	* sentlist to null, and viterbi to the Viterbi object parameter.
 	*/
+
 	public TextParser(Viterbi v)
+
 	{
 	 	input = "";
 		viterbi = v;
 	}
 		
+
 	/**
+
 	* Parses a block of text into pairs of Strings and parts of speech.
+
 	* @param text input block of text
+
 	* @return list of pairs of Strings and parts of speech
+
 	*/
+
 	public ArrayList<ArrayList<Pair<String, POS>>> parse(String text)
+		throws POSNotFoundException
+
    {
+
 		/*
+
 		* sentlist ArrayList holds resulting list of sentences,
 		* which are ArrayLists of words.
+
 		*/
 		ArrayList<ArrayList<Pair<String, POS>>> sentlist =
 			new ArrayList<ArrayList<Pair<String, POS>>>();
+
 	
 		//add whitespace to the end so last punctuation mark is not neglected
 		input = text + " ";
+
 		
 		/*
 		* Split input by ". ", "! ", and "? ". Does not split when punctuation
@@ -53,6 +82,7 @@ public class TextParser
 		String sentarray[] =
 			input.split("((?<=([.!?]+\\s))|(?=([.!?]+\\s)))");
 		int sents = sentarray.length / 2;
+
 		
 		//combine punctuation with sentences for an array of sentences with punctuation
 		String apsentarray[] = new String[sents];
@@ -63,39 +93,68 @@ public class TextParser
 		
 		//split sentences into words by space and punctuation, add to sentlist ArrayList
 		String wordarray[][] = new String[sents][];
+
 		for (int i = 0; i < sents; i++)
+
 		{
+
 			//split into words and punctuation, keeping punctuation as elements in array
 			wordarray[i] =
 				apsentarray[i].split("((?<=(([.?!,:;\"]|\\s+)))|(?=(([.?!,:;\"]|\\s+))))");
 			
+			//retains all white space by concatenating it to the beginning of the next word.
 			for(int j = 0; j < wordarray[i].length; j++)
 			{
-				if ((wordarray[i][j].equals(" ") || wordarray[i][j].equals("\n"))&& j < wordarray[i].length - 1)
+				if (wordarray[i][j].matches("\\s+") && j < wordarray[i].length - 1)
 				{
 					String s = wordarray[i][j];
 					wordarray[i][j+1] = s + wordarray[i][j+1];
 				}
-				else if (wordarray[i][j].equals(" ") || wordarray[i][j].equals("\n"))
+				
+				//if the whitespace is at the end of the sentence, concats to end of last word.
+				else if (wordarray[i][j].matches("\\s+"))
 				{
 					String s = wordarray[i][j];
-					wordarray[i][j-1] = wordarray[i][j-1] + s;
+					int k = j - 1;
+					while (k >= 0 && wordarray[i][k].matches("\\s+"))
+					{
+						k--;
+					}
+					
+					if (k == -1)
+					{
+						return sentlist;
+					}
+					else
+					{
+						wordarray[i][k] = wordarray[i][k] + s;
+					}
+
 				}
 			}
 			
-			//add words to wordlist ArrayList
+			//add words to wordlist ArrayList,
 			ArrayList<String> wordlist = new ArrayList<String>();
 			for (int j = 0; j < wordarray[i].length; j++)
 			{
-				if (wordarray[i][j].equals(" "))
+				//skips over white space elements since already accounted for
+				if (wordarray[i][j].matches("\\s*"))
+				{
 					continue;
+				}
 				else
+				{
 					wordlist.add(wordarray[i][j]);
+				}
 			}
 		   
 			//add wordlist Arraylist as a sentence element to sentlist ArrayList
 			sentlist.add(viterbi.parse(wordlist));
+
 		}
+
 		return sentlist;
+
    }
+
 }

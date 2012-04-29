@@ -2,10 +2,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.Iterator;
 
 /**
  * Parts of speech class statically contains a list of the parts of speech 
@@ -132,8 +130,11 @@ public class POS
      * @param index the index of the part of speech object
      * @return the part of speech with the given index
      */
-    public static POS getPOSbyIndex (int index)
+    public static POS getPOSbyIndex (int index) throws POSNotFoundException
     {
+    	if (index >= indexToPOS.size())
+    		throw new POSNotFoundException("No part of speech with index " + index + " was found.");
+
 	    return indexToPOS.get(index);
     }
     
@@ -149,7 +150,7 @@ public class POS
 		if (symbolToIndex.containsKey(symbol))
 			return symbolToIndex.get(symbol);
 		else
-			throw new POSNotFoundException();
+			throw new POSNotFoundException("No part of speech with symbol " + symbol + " was found.");
     }
 
     /**
@@ -174,7 +175,7 @@ public class POS
      * @return none
      */
     public static void loadFromFile (String tagset, String gtagset)
-    	throws IOException, WrongFormatException, POSNotFoundException
+    	throws FileNotFoundException, WrongFormatException, POSNotFoundException
     {
 		// deal with gtagset
 		
@@ -202,7 +203,8 @@ public class POS
 				
 				// check to see if there was actually a tab!
 				if (pair.length != 2)
-					throw new WrongFormatException();
+					throw new WrongFormatException("Corpus simple tagset not formatted correctly.");
+					
 				String pName = pair[0];
 				String[] pSymbols = pair[1].split(" ");
 				
@@ -223,22 +225,6 @@ public class POS
 			if (s != null)
                 s.close();
 		}
-		
-		// test code
-		/*Set<String> ks = symbolTogIndex.keySet();
-        Iterator<String> i = ks.iterator();
-        while (i.hasNext()) {
-        	String k = i.next();
-        	System.out.println (k + "\t" + symbolTogIndex.get(k));
-        }*/
-        /*
-        Set<Integer> ks = gIndexTogName.keySet();
-        Iterator<Integer> i = ks.iterator();
-        while (i.hasNext()) {
-        	int k = i.next();
-        	System.out.println (k + "\t" + gIndexTogName.get(k));
-        }
-        */
 		
 		// deal with tagset
     	indexToPOS.clear();
@@ -273,10 +259,11 @@ public class POS
                 String[] pair = (s.next()).split("\t");
                 // check to see if there was actually a tab!
 				if (pair.length != 2)
-					throw new WrongFormatException();
+					throw new WrongFormatException("Corpus tagset not formatted correctly.");
 				
 				if (!symbolTogIndex.containsKey(pair[0]))
-					throw new POSNotFoundException();
+					throw new POSNotFoundException("A part of speech with symbol " + pair[0] + " was not found.");
+					
 				int gIndex = symbolTogIndex.get(pair[0]);
                 p = new POS (pair[0], pair[1], gIndex, gIndexTogName.get(gIndex));
                 
@@ -290,17 +277,5 @@ public class POS
             if (s != null)
                 s.close();
         }
-        
-        // testing code
-        /*for (int i = 0; i < indexToPOS.size(); i++)
-        	System.out.println (i + "\t" + indexToPOS.get(i).getIndex() + "\t" + indexToPOS.get(i).getSymbol() + "\t" + indexToPOS.get(i).getName());
-        
-        Set<String> ks = symbolToIndex.keySet();
-        Iterator<String> i = ks.iterator();
-        while (i.hasNext()) {
-        	String k = i.next();
-        	System.out.println (k + "\t" + symbolToIndex.get(k));
-        }
-        */
     }
 }

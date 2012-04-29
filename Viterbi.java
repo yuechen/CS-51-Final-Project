@@ -1,9 +1,9 @@
-import java.util.LinkedList;
 import java.util.HashMap;
-import java.util.Map;
-
 import java.util.ArrayList;
-import java.io.IOException;
+import java.util.Set;
+import java.util.Map;
+import java.util.Iterator;
+
 import java.io.File;
 import java.util.Scanner;
 import java.io.PrintWriter;
@@ -11,9 +11,8 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.FileReader;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.Iterator;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * As a class, <code>Viterbi</code> contains both the HMM model 
@@ -69,7 +68,7 @@ public class Viterbi
      * represented as a HashMap of Strings (words) to arrays
      * of probabilities.
      */
-    /*private*/ HashMap<String, float[]> p_emission = new HashMap<String, float[]>();
+    private HashMap<String, float[]> p_emission = new HashMap<String, float[]>();
 
     /**
      * The logs of the transmission probabilities of the model,
@@ -78,14 +77,7 @@ public class Viterbi
      * transmission probability for moving from 
      * POS 1 to POS 2. 
      */
-    /*private*/ float[][] p_transmission;
-
-    /**
-     * Basic constructor
-     */
-    private Viterbi(String tagset, String gtagset)
-    {
-    }
+    private float[][] p_transmission;
 
     /**
      * Constructor; initializes the probability table from the 
@@ -97,20 +89,10 @@ public class Viterbi
      * @return none
      */
     public Viterbi(String tagset, String gtagset, String datafile) 
-    	throws WrongFormatException
+    	throws FileNotFoundException, WrongFormatException, POSNotFoundException
     {
-	// tries to load the tagset
-	try
-	{
-	    POS.loadFromFile (tagset, gtagset);
-	}
-	catch (IOException e)
-	{
-	    System.out.println("oops. The tagset could not be loaded properly.");
-	    System.exit(1);
 
-	    // TO-DO: better error handling?
-	}
+	POS.loadFromFile (tagset, gtagset);
 
 	Scanner sc = null;
 	// deals with the actual data file
@@ -127,7 +109,7 @@ public class Viterbi
 
 	    // basic check that the number of parts of speech matches up
 	    if (this.numPOS != POS.numPOS())
-		throw new Exception("The training file does not seem to match the indicated tagset.");
+			throw new WrongFormatException("The training file does not seem to match the indicated tagset.");
 
 	    // initializes the probability array
 	    this.p_transmission = new float[this.numPOS][this.numPOS];
@@ -169,7 +151,7 @@ public class Viterbi
 		word = sc.next("\\S+");
 		sc.skip(" ");
 		if (i != POS.getIndexBySymbol(word))
-		    throw new Exception("The training file does not seem to match the indicated tagset.");
+		    throw new WrongFormatException("The training file does not seem to match the indicated tagset.");
 
 		line = sc.nextLine().split(" ");
 		numEntries = (line.length+1)/2;
@@ -187,19 +169,10 @@ public class Viterbi
 		}
 	    }
 	}
-	catch (Exception e)
-	{
-	    if (e instanceof IOException)
-		System.out.println("oops. The training data file could not be loaded properly.");
-	    else
-		System.out.println(e.getMessage());
-
-	    System.exit(1);
-	}
 	finally
 	{
 	    if (sc != null)
-		sc.close();
+			sc.close();
 	}
     }
 
@@ -218,23 +191,18 @@ public class Viterbi
      */
     public static void loadCorpusForTraining (String tagset, String gtagset,
 					      String corpusDirectory,
-					      String saveLocation) throws WrongFormatException
-    {
+					      String saveLocation)
+						  throws IOException, FileNotFoundException,
+							     WrongFormatException, POSNotFoundException    
+	{
 	int numWords = 0;
 	
 	// load all of the corpus tags from the corpus_tagset
-	try
-    {
-	   	POS.loadFromFile (tagset, gtagset);
-	}
-	catch (IOException e)
-	{
-	 	System.out.println ("File I/O Error.");
-	 	System.exit(1);
-	}
+
+   	POS.loadFromFile (tagset, gtagset);
 	
 	int numPOS = POS.numPOS();
-		
+	
 	/* Hashmap of number of times each word appears
 	 * in the training data for each part of speech;
 	 * as a hashmap of Strings to integer arrays, with each integer
@@ -257,10 +225,8 @@ public class Viterbi
 	File[] fl = dir.listFiles();
 	
 	// If none, error
-	if (fl == null) {
-	   	System.out.println ("Directory not valid.");
-	   	System.exit(1);
-	}
+	if (fl == null)
+		throw new FileNotFoundException("Corpus directory was not valid.");
 
 	// Begin reading from corpus files
 	Scanner scanner;
@@ -285,15 +251,7 @@ public class Viterbi
                 		replaceAll(POS.getIgnoreRegex(), "");
                 		
                 // get the index of the POS, if none, error
-			    try 
-			    {
-                	POSIndex = POS.getIndexBySymbol(symbol);
-			    } 
-			    catch (POSNotFoundException e) 
-			    {
-                	System.out.println ("POS not found.");
-                	System.exit(1);
-			    }
+                POSIndex = POS.getIndexBySymbol(symbol);
                 	
 			    int[] arr;
                 	
@@ -322,34 +280,15 @@ public class Viterbi
 			    // add to pos_frequencies
 			    pos_frequencies[POSIndex]++;
 			}
-        } 
-	    catch (Exception e)
-		{
-			// better error handling, but for now, exit program
-		    System.exit(1);
-		}
+        }
 	    finally 
         {
         	// close file
 		    if (scanner != null)
-		    {
-                	scanner.close();
-			}
+                scanner.close();
     	}
 	}
-	    
-	// test code
-	/*
-	  Set<String> ks = word_to_pos.keySet();
-	  Iterator<String> iter = ks.iterator();
-	  while (iter.hasNext()) {
-	  String k = iter.next();
-	  if (k.toLowerCase().equals("the"))
-	  System.out.println (k + "\t" + Arrays.toString(word_to_pos.get(k)));
-	  }
-        
-	  System.out.println ("Total number of words: " + word_to_pos.size());
-        */
+
 	numWords = word_to_pos.size();
 	PrintWriter saveFile = null;
 
@@ -400,14 +339,10 @@ public class Viterbi
 		saveFile.println(line);
 	    }
 	}
-	catch (IOException e)
-	{
-	    System.out.println("File could not be saved.");
-	    System.exit(1);
-	}
 	finally
 	{
-	    saveFile.close();
+	    if (saveFile != null)
+	    	saveFile.close();
 	}
     }
 
@@ -418,6 +353,7 @@ public class Viterbi
      * @return list of (state, output) pairs
      */
     public ArrayList<Pair<String, POS>> parse(ArrayList<String> results)
+    	throws POSNotFoundException
       {
 	  int length = results.size(); // number of pieces of the sentence
 	  float[][] probs = new float[numPOS][length]; // probability table
@@ -488,8 +424,8 @@ public class Viterbi
 		      		}
 
 				// set values in tables
-				if (value > Float.NEGATIVE_INFINITY)
-					System.out.println(word + " " + value + " / ");
+				/*if (value > Float.NEGATIVE_INFINITY)
+					System.out.println(word + " " + value + " / ");*/
 				if (value > Float.NEGATIVE_INFINITY)
 					allneg = false;
 				parts[j][i] = index;
@@ -544,6 +480,7 @@ public class Viterbi
      	*/
     private ArrayList<Pair<String, POS>> create_for_parse(ArrayList<String> words, float[][] probs, 
 							  int[][] parts, int wIndex, int pIndex)
+							  throws POSNotFoundException
     {
 	if (wIndex < 0)
 	    return new ArrayList<Pair<String,POS>>();
