@@ -15,8 +15,7 @@ class POSTaggerApp {
     		Viterbi v = new Viterbi("corpus_tagset.txt", "corpus_simple_tagset.txt", "datafile.txt");
 		
 			TextParser parser = new TextParser(v);
-			System.out.println(" Hey guys, I'm going for a run.\nJenny is a wonderful  person.");
-		   ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse("Hey guys, I'm going for a run.\nJenny is a wonderful person.");
+		   ArrayList<ArrayList<Pair<String, POS>>> parsed = parser.parse(" ");
 			System.out.println("Checkpoint1\n");
     		for(int i = 0 ; i < parsed.size(); i++)
     		{

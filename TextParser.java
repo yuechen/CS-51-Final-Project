@@ -83,7 +83,21 @@ public class TextParser
 				else if (wordarray[i][j].matches("\\s+"))
 				{
 					String s = wordarray[i][j];
-					wordarray[i][j-1] = wordarray[i][j-1] + s;
+					int k = j - 1;
+					while (k >= 0 && wordarray[i][k].matches("\\s+"))
+					{
+						k--;
+					}
+					
+					if (k == -1)
+					{
+						return sentlist;
+					}
+					else
+					{
+						wordarray[i][k] = wordarray[i][k] + s;
+					}
+
 				}
 			}
 			
