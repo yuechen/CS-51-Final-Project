@@ -4,6 +4,15 @@
  */
 package tagger;
 
+import java.awt.Point;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
+
 /**
  *
  * @author Billy
@@ -40,15 +49,17 @@ public class TextEditor extends javax.swing.JFrame {
         jList1 = new javax.swing.JList();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        dictionaryText = new javax.swing.JTextArea();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        thesaurusText = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
         menuOpen = new javax.swing.JMenuItem();
         menuSave = new javax.swing.JMenuItem();
+        menuOptions = new javax.swing.JMenu();
+        menuCorpus = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         menuAbout = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenuItem();
@@ -56,6 +67,8 @@ public class TextEditor extends javax.swing.JFrame {
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Part of Speech Tagger");
+        setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Text Editor"));
         jPanel1.setName("");
@@ -96,6 +109,7 @@ public class TextEditor extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Tagged Text"));
 
         taggedTextPane.setEditable(false);
+        taggedTextPane.setText("Test test test.");
         taggedTextPane.setName("");
         taggedTextPane.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -134,6 +148,9 @@ public class TextEditor extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        jList1.setFocusable(false);
+        jList1.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jList1.setSelectionForeground(new java.awt.Color(86, 86, 86));
         jScrollPane5.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -155,11 +172,13 @@ public class TextEditor extends javax.swing.JFrame {
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Dictionary"));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setEditable(false);
-        jTextArea1.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
-        jTextArea1.setRows(5);
-        jScrollPane3.setViewportView(jTextArea1);
+        dictionaryText.setColumns(20);
+        dictionaryText.setEditable(false);
+        dictionaryText.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+        dictionaryText.setRows(5);
+        dictionaryText.setText("testes test ");
+        dictionaryText.setBorder(null);
+        jScrollPane3.setViewportView(dictionaryText);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -180,11 +199,11 @@ public class TextEditor extends javax.swing.JFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Thesaurus"));
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setEditable(false);
-        jTextArea2.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
-        jTextArea2.setRows(5);
-        jScrollPane4.setViewportView(jTextArea2);
+        thesaurusText.setColumns(20);
+        thesaurusText.setEditable(false);
+        thesaurusText.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+        thesaurusText.setRows(5);
+        jScrollPane4.setViewportView(thesaurusText);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -238,6 +257,18 @@ public class TextEditor extends javax.swing.JFrame {
         menuFile.add(menuSave);
 
         jMenuBar1.add(menuFile);
+
+        menuOptions.setText("Options");
+
+        menuCorpus.setText("Corpus");
+        menuCorpus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCorpusActionPerformed(evt);
+            }
+        });
+        menuOptions.add(menuCorpus);
+
+        jMenuBar1.add(menuOptions);
 
         jMenu1.setText("Help");
 
@@ -299,7 +330,15 @@ public class TextEditor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void taggedTextPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_taggedTextPaneMouseClicked
-        // TODO add handling for tagged words clicked on
+        try {
+            Point pt = new Point(evt.getX(), evt.getY());
+            int pos = taggedTextPane.viewToModel(pt);
+            int start = Utilities.getWordStart(taggedTextPane, pos);
+            int end = Utilities.getWordEnd(taggedTextPane, pos);
+            dictionaryText.setText(taggedTextPane.getText(start, end-start));
+        } catch (BadLocationException ex) {
+            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_taggedTextPaneMouseClicked
 
     private void menuFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFileActionPerformed
@@ -307,28 +346,98 @@ public class TextEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_menuFileActionPerformed
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
-        // TODO add newfile
+        textEditorPane.setText("");
+        taggedTextPane.setText("");
+        dictionaryText.setText("");
+        thesaurusText.setText("");
     }//GEN-LAST:event_menuNewActionPerformed
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
-        // TODO add opening
+        JFileChooser chooser = new JFileChooser();
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(chooser.getSelectedFile().getPath()));
+                try {
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    try {
+                        line = br.readLine();
+                    } catch (IOException ex) {
+                        Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    while (line != null) {
+                        sb.append(line);
+                        sb.append("\n");
+                        try {
+                            line = br.readLine();
+                        } catch (IOException ex) {
+                            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    String everything = sb.toString();
+                    textEditorPane.setText(everything);
+                } finally {
+                    try {
+                        br.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }//GEN-LAST:event_menuOpenActionPerformed
 
     private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
-        // TODO add saving
+        JFileChooser chooser = new JFileChooser();
+        int returnVal = chooser.showSaveDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            FileWriter outFile = null;
+            try {
+                outFile = new FileWriter(chooser.getSelectedFile());
+                try (PrintWriter out = new PrintWriter(outFile)) {
+                    out.print(textEditorPane.getText());
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    outFile.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
-        // TODO add about
+        JOptionPane.showMessageDialog(null, "Part of Speech Tagger created by Billy Janitsch, Jenny Liu, Yuechen Zhao, and Joy Zheng.", "About", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_menuAboutActionPerformed
 
     private void menuHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHelpActionPerformed
-        // TODO add help
+        JOptionPane.showMessageDialog(null, "Type English-language text into the text editor pane, and then click 'Tag' to have its parts of speech identified.\n"
+                + "Click on individual words to view their definitions and thesaurus entries.", "Help", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_menuHelpActionPerformed
 
     private void tagButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagButtonActionPerformed
-        // TODO call text parser with whatever is in the text editor pane
+        taggedTextPane.setText(textEditorPane.getText());
     }//GEN-LAST:event_tagButtonActionPerformed
+
+    private void menuCorpusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCorpusActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuCorpusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -372,6 +481,7 @@ public class TextEditor extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea dictionaryText;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JList jList1;
     private javax.swing.JMenu jMenu1;
@@ -387,16 +497,17 @@ public class TextEditor extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JMenuItem menuAbout;
+    private javax.swing.JMenuItem menuCorpus;
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenuItem menuHelp;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuOpen;
+    private javax.swing.JMenu menuOptions;
     private javax.swing.JMenuItem menuSave;
     private javax.swing.JButton tagButton;
     private javax.swing.JTextPane taggedTextPane;
     private javax.swing.JTextPane textEditorPane;
+    private javax.swing.JTextArea thesaurusText;
     // End of variables declaration//GEN-END:variables
 }
