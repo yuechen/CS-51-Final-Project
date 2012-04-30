@@ -24,13 +24,9 @@ To create a datafile from the command line, run:
 java POSTaggerApp compute <tagset location> <simple tagset location> <corpus directory> <datafile save location>
 
 ----- DEBUGGING -----
-In particular, the corpus directory may NOT contain any non-corpus files. If it contains
-any files other than corpus files, you will be prompted for a new corpus directory.
+In particular, the corpus directory may NOT contain any non-corpus files. If it contains any files other than corpus files, you will be prompted for a new corpus directory.
 
-Check for hidden files in your corpus directory. To do so, add the -a flag to ls in 
-terminal. Specifically, for Mac OS users, the Mac Finder has the tendency to create a file 
-named ".DS_Store" in the corpus directory. Remove this file with terminal if this is the 
-case.
+Check for hidden files in your corpus directory. To do so, add the -a flag to ls in terminal. Specifically, for Mac OS users, the Mac Finder has the tendency to create a file named ".DS_Store" in the corpus directory. Remove this file with terminal if this is the case.
 
 ----- DEFAULT OR INCLUDED FILE NAMES (see javadoc for details) -----
 Files modified during runtime:
