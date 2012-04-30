@@ -137,7 +137,7 @@ public class POS
 		return ignoreRegex;
     }
     
-    public static POS getgNameBygIndex (int gIndex) throws POSNotFoundException
+    public static String getgNameBygIndex (int gIndex) throws POSNotFoundException
     {
     	if (gIndex >= gIndexTogName.size())
     		throw new POSNotFoundException("No part of speech with gIndex " + gIndex + " was found.");

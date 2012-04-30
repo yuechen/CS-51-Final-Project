@@ -29,22 +29,53 @@ public class TextEditor extends javax.swing.JFrame {
      */
     public TextEditor() {
         initComponents();
-        System.out.println("Components initialized.");
-        
     }
     
     public void InitializeStuff() {
-        boolean inited = false;
-        while (!inited) {
+        try {
+            // initialize 
             try {
                 v = new Viterbi("corpus_tagset.txt", "corpus_simple_tagset.txt", "datafile.txt");
                 parser = new TextParser(v);
-                d = new Dictionary("webster_dictionary.txt");
-                th = new Thesaurus("thesaurus.txt");
-                inited = true;
-            } catch (    FileNotFoundException | WrongFormatException | POSNotFoundException ex) {
-                Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
             }
+            catch (    FileNotFoundException | WrongFormatException | POSNotFoundException ex) {
+                v = new Viterbi("backup/corpus_tagset.txt", "backup/corpus_simple_tagset.txt", "backup/datafile.txt");
+                parser = new TextParser(v);
+            }
+            
+            try {
+                d = new Dictionary("webster_dictionary.txt");
+            }
+            catch (FileNotFoundException ex) {
+                d = new Dictionary("backup/webster_dictionary.txt");
+            }
+            
+            try {
+                th = new Thesaurus("thesaurus.txt");
+            }
+            catch (FileNotFoundException ex) {
+                th = new Thesaurus("backup/thesaurus.txt");
+            }
+
+            Style style = legendText.addStyle(getColor(0), null);
+            StyleConstants.setForeground(style, Color.decode(getColor(0)));
+            for (int i=1; i<15; i++)
+            {
+                style = legendText.addStyle(getColor(i), null);
+                StyleConstants.setForeground(style, Color.decode(getColor(i)));
+            }
+            StyledDocument doc = legendText.getStyledDocument();
+            for (int i=0; i<POS.numgIndices(); i++) {
+                try {
+                    if (i == POS.numgIndices()-1) doc.insertString(doc.getLength(), POS.getgNameBygIndex(i), legendText.getStyle(getColor(i)));
+                    else doc.insertString(doc.getLength(), POS.getgNameBygIndex(i)+"\n", legendText.getStyle(getColor(i)));
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        } catch (    FileNotFoundException | WrongFormatException | POSNotFoundException ex) {
+            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -72,8 +103,8 @@ public class TextEditor extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         dictionaryText = new javax.swing.JTextArea();
         jPanel5 = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        thesaurusText = new javax.swing.JTextArea();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        thesaurusText = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -206,11 +237,7 @@ public class TextEditor extends javax.swing.JFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Thesaurus"));
 
-        thesaurusText.setColumns(20);
-        thesaurusText.setEditable(false);
-        thesaurusText.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
-        thesaurusText.setRows(5);
-        jScrollPane4.setViewportView(thesaurusText);
+        jScrollPane5.setViewportView(thesaurusText);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -218,14 +245,14 @@ public class TextEditor extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4)
+                .addComponent(jScrollPane5)
                 .addContainerGap())
         );
 
@@ -355,7 +382,56 @@ public class TextEditor extends javax.swing.JFrame {
         colors[12] = "#900018";
         colors[13] = "#047EB1";
         colors[14] = "#A77FAA";
-        return colors[n];
+        return colors[n%15];
+    }
+    
+    private void ChooseNewCorpus() {
+        JFileChooser chooser = new JFileChooser();
+
+        chooser.setDialogTitle("Choose corpus");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = chooser.showOpenDialog(null);
+
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            String corpusPath = chooser.getSelectedFile().getPath();
+            chooser.setDialogTitle("Choose tagset");
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            returnVal = chooser.showOpenDialog(null);
+
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                String tagsetPath = chooser.getSelectedFile().getPath();
+                chooser.setDialogTitle("Choose simple tagset");
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                returnVal = chooser.showOpenDialog(null);
+
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        String simpleTagsetPath = chooser.getSelectedFile().getPath();
+
+                        File source = new File(tagsetPath);
+                        File destination = new File("corpus_tagset.txt");
+                        source.renameTo(destination);
+
+                        source = new File(simpleTagsetPath);
+                        destination = new File("corpus_simple_tagset.txt");
+                        source.renameTo(destination);
+
+                        Viterbi.loadCorpusForTraining("corpus_tagset.txt", "corpus_simple_tagset.txt", corpusPath, "datafile.txt");
+                        v = new Viterbi("corpus_tagset.txt", "corpus_simple_tagset.txt", "datafile.txt");
+                        parser = new TextParser(v);
+                    } catch (                IOException | WrongFormatException | POSNotFoundException ex) {
+                        try {
+                            v = new Viterbi("backup/corpus_tagset.txt", "backup/corpus_simple_tagset.txt", "backup/datafile.txt");
+                            parser = new TextParser(v);
+                            JOptionPane.showMessageDialog(null, "Invalid files. Please choose again.", "Error", JOptionPane.PLAIN_MESSAGE);
+                        }
+                        catch (                IOException | WrongFormatException | POSNotFoundException ex2) {
+                            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex2);
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private void taggedTextPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_taggedTextPaneMouseClicked
@@ -503,38 +579,7 @@ public class TextEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_tagButtonActionPerformed
 
     private void menuCorpusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCorpusActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        
-        chooser.setDialogTitle("Choose corpus");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnVal = chooser.showOpenDialog(null);
-
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            String corpusPath = chooser.getSelectedFile().getPath();
-            chooser.setDialogTitle("Choose tagset");
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            returnVal = chooser.showOpenDialog(null);
-
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
-                String tagsetPath = chooser.getSelectedFile().getPath();
-                chooser.setDialogTitle("Choose simple tagset");
-                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                returnVal = chooser.showOpenDialog(null);
-
-                if(returnVal == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        String simpleTagsetPath = chooser.getSelectedFile().getPath();
-                        System.out.println(tagsetPath + simpleTagsetPath + corpusPath);
-                        Viterbi.loadCorpusForTraining(tagsetPath, simpleTagsetPath, corpusPath, "datafile.txt");
-                        v = new Viterbi(tagsetPath, simpleTagsetPath, "datafile.txt");
-                        parser = new TextParser(v);
-                    } catch (                IOException | WrongFormatException | POSNotFoundException ex) {
-                        JOptionPane.showMessageDialog(null, "Invalid files. Please choose again.", "Error", JOptionPane.PLAIN_MESSAGE);
-                        Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }
+        ChooseNewCorpus();
     }//GEN-LAST:event_menuCorpusActionPerformed
 
     /**
@@ -591,7 +636,7 @@ public class TextEditor extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTextPane legendText;
     private javax.swing.JMenuItem menuAbout;
@@ -605,6 +650,6 @@ public class TextEditor extends javax.swing.JFrame {
     private javax.swing.JButton tagButton;
     private javax.swing.JTextPane taggedTextPane;
     private javax.swing.JTextPane textEditorPane;
-    private javax.swing.JTextArea thesaurusText;
+    private javax.swing.JTextPane thesaurusText;
     // End of variables declaration//GEN-END:variables
 }
