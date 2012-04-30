@@ -4,8 +4,6 @@ Contributors: Billy Janitsch, Jenny Liu, Yuechen Zhao, Joy Zheng
 ----- COMPILATIONS AND RUNTIME INSTRUCTIONS -----
 To build code, go into highest level in repository and run:
 javac -classpath . *.java
-NOTE: Due to multi-catch exception handling, a JDK of version 7
-(i.e. 1.7) or higher is required.
 
 To execute with the GUI, run:
 java POSTaggerApp
@@ -40,7 +38,7 @@ corpus_simple_tagset.txt : A list mapping tags in the full tagset
 
 Included default files:
 /corpus : a directory containing the Brown Corpus
-webster_ dictionary.txt : an English-language dictionary based on the one 
-	found at http://www.gutenberg.org/files/29765/29765-8.txt
+dictionary.txt : an English-language dictionary based on the one found at
+	http://www.gutenberg.org/files/29765/29765-8.txt
 thesaurus.txt: an Engligh-language thesaurus based on the one found at 
  	http://www.gutenberg.org/cache/epub/10681/pg10681.txt
