@@ -33,7 +33,7 @@ public class TextEditor extends javax.swing.JFrame {
     
     public void InitializeStuff() {
         try {
-            // initialize 
+            // initialize the Viterbi class
             try {
                 v = new Viterbi("corpus_tagset.txt", "corpus_simple_tagset.txt", "datafile.txt");
                 parser = new TextParser(v);
@@ -43,6 +43,7 @@ public class TextEditor extends javax.swing.JFrame {
                 parser = new TextParser(v);
             }
             
+            // initializes the Dictionary class
             try {
                 d = new Dictionary("webster_dictionary.txt");
             }
@@ -50,6 +51,7 @@ public class TextEditor extends javax.swing.JFrame {
                 d = new Dictionary("backup/webster_dictionary.txt");
             }
             
+            // initializes the Thesaurus class
             try {
                 th = new Thesaurus("thesaurus.txt");
             }
@@ -57,6 +59,7 @@ public class TextEditor extends javax.swing.JFrame {
                 th = new Thesaurus("backup/thesaurus.txt");
             }
 
+            // populates the Legend field of the GUI
             Style style = legendText.addStyle(getColor(0), null);
             StyleConstants.setForeground(style, Color.decode(getColor(0)));
             for (int i=1; i<15; i++)
@@ -399,22 +402,26 @@ public class TextEditor extends javax.swing.JFrame {
     private void ChooseNewCorpus() {
         JFileChooser chooser = new JFileChooser();
 
+        // prompts the user to choose a corpus
         chooser.setDialogTitle("Choose corpus");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int returnVal = chooser.showOpenDialog(null);
 
         if(returnVal == JFileChooser.APPROVE_OPTION) {
+            // prompts the user to choose a tagset
             String corpusPath = chooser.getSelectedFile().getPath();
             chooser.setDialogTitle("Choose tagset");
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             returnVal = chooser.showOpenDialog(null);
 
             if(returnVal == JFileChooser.APPROVE_OPTION) {
+                // prompts the user to choose a simplified tagset
                 String tagsetPath = chooser.getSelectedFile().getPath();
                 chooser.setDialogTitle("Choose simple tagset");
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 returnVal = chooser.showOpenDialog(null);
 
+                // move the new files into the working directory and reinitialize Viterbi
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                     try {
                         String simpleTagsetPath = chooser.getSelectedFile().getPath();
@@ -432,6 +439,7 @@ public class TextEditor extends javax.swing.JFrame {
                         parser = new TextParser(v);
                     } catch (                IOException | WrongFormatException | POSNotFoundException ex) {
                         try {
+                            // if the files are invalid, load the backup files
                             v = new Viterbi("backup/corpus_tagset.txt", "backup/corpus_simple_tagset.txt", "backup/datafile.txt");
                             parser = new TextParser(v);
                             JOptionPane.showMessageDialog(null, "Invalid files. Please choose again.", "Error", JOptionPane.PLAIN_MESSAGE);
@@ -451,15 +459,20 @@ public class TextEditor extends javax.swing.JFrame {
      */
     private void taggedTextPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_taggedTextPaneMouseClicked
         try {
+            // figures out which word the user clicked on
             Point pt = new Point(evt.getX(), evt.getY());
             int pos = taggedTextPane.viewToModel(pt);
             int start = Utilities.getWordStart(taggedTextPane, pos);
             int end = Utilities.getWordEnd(taggedTextPane, pos);
+            
+            // looks up the word in the dictionary and thesaurus
             String dictWord = taggedTextPane.getText(start, end-start);
             thesaurusText.setText(th.lookup(dictWord));
             dictionaryText.setText(dictWord.toUpperCase() + "\n\n" + d.lookup(dictWord));
             thesaurusText.setCaretPosition(0);
             dictionaryText.setCaretPosition(0);
+            
+            // highlights the selected word
             StyledDocument doc = taggedTextPane.getStyledDocument();
             Style style = taggedTextPane.addStyle("bgh", null);
             StyleConstants.setBackground(style, Color.decode("#E0E0E0"));
@@ -585,6 +598,7 @@ public class TextEditor extends javax.swing.JFrame {
      */
     private void tagButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagButtonActionPerformed
         try {
+            // initializes the available colors as styles
             Style style = taggedTextPane.addStyle(getColor(0), null);
             StyleConstants.setForeground(style, Color.decode(getColor(0)));
             for (int i=1; i<15; i++)
@@ -593,6 +607,7 @@ public class TextEditor extends javax.swing.JFrame {
                 StyleConstants.setForeground(style, Color.decode(getColor(i)));
             }
             
+            // inserts each tagged word into the tagged text pane and colors
             taggedTextPane.setText("");
             ArrayList<ArrayList<Pair<String, POS>>> sentenceList = parser.parse(textEditorPane.getText());
             for (int i=0; i<sentenceList.size(); i++) {
