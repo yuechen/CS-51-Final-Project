@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
-public class Thesaurus {
+class Thesaurus {
 
     /** A map from words to strings of synonyms separated by linebreaks */
     private HashMap<String, String> map;
