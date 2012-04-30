@@ -136,6 +136,14 @@ public class POS
     {
 		return ignoreRegex;
     }
+    
+    public static POS getgNameBygIndex (int gIndex) throws POSNotFoundException
+    {
+    	if (gIndex >= gIndexTogName.size())
+    		throw new POSNotFoundException("No part of speech with gIndex " + gIndex + " was found.");
+    	
+    	return gIndexTogName.get(gIndex);
+    }
 
     /**
      * Returns a <code>POS</code> object given an index
