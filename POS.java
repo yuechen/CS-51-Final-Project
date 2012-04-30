@@ -31,9 +31,6 @@ public class POS
     
     /** regex of the tags to ignore when reading corpus */
     private static String ignoreRegex = "";
-    
-    /** number of gIndices */
-    private static int numgIndices = 0;
 
     /** HashMap of symbols to indices */
     private static HashMap<String, Integer> symbolToIndex = new HashMap<String, Integer>();
@@ -41,6 +38,9 @@ public class POS
     /** ArrayList of all the existing <code>POS</code> objects, indexed by the
      * indicies of the <code>POS</code> objects*/
     private static ArrayList<POS> indexToPOS = new ArrayList<POS>();
+    
+    /** HashMap of gIndices to gNames */
+    private static HashMap<Integer, String> gIndexTogName = new HashMap<Integer, String>();
 
     /**
      * Returns the default POS for objects not found in the dictionary
@@ -124,7 +124,7 @@ public class POS
      */
     public static int numgIndices ()
     {
-		return numgIndices;
+		return gIndexTogName.size();
     }
     
     /**
@@ -196,7 +196,7 @@ public class POS
 		 */
 		Scanner s = null;
 		HashMap<String, Integer> symbolTogIndex = new HashMap<String, Integer>();
-		HashMap<Integer, String> gIndexTogName = new HashMap<Integer, String>();
+		gIndexTogName.clear();
 		
 		try
 		{
@@ -237,9 +237,6 @@ public class POS
 			if (s != null)
                 s.close();
 		}
-		
-		// store the number of gIndices
-		numgIndices = gIndexTogName.size();
 		
 		// deal with tagset
     	indexToPOS.clear();
