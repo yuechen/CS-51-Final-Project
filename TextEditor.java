@@ -382,7 +382,7 @@ public class TextEditor extends javax.swing.JFrame {
         colors[12] = "#900018";
         colors[13] = "#047EB1";
         colors[14] = "#A77FAA";
-        return colors[n];
+        return colors[n%15];
     }
     
     private void ChooseNewCorpus() {
