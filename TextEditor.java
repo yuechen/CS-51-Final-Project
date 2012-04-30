@@ -41,6 +41,7 @@ public class TextEditor extends javax.swing.JFrame {
                 parser = new TextParser(v);
                 d = new Dictionary("webster_dictionary.txt");
                 th = new Thesaurus("thesaurus.txt");
+                inited = true;
             } catch (    FileNotFoundException | WrongFormatException | POSNotFoundException ex) {
                 Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -504,37 +505,32 @@ public class TextEditor extends javax.swing.JFrame {
     private void menuCorpusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCorpusActionPerformed
         JFileChooser chooser = new JFileChooser();
         
-        boolean is_init = false;
-        while (!is_init)
-        {
-            chooser.setDialogTitle("Choose corpus");
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int returnVal = chooser.showOpenDialog(null);
+        chooser.setDialogTitle("Choose corpus");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = chooser.showOpenDialog(null);
+
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            String corpusPath = chooser.getSelectedFile().getPath();
+            chooser.setDialogTitle("Choose tagset");
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            returnVal = chooser.showOpenDialog(null);
 
             if(returnVal == JFileChooser.APPROVE_OPTION) {
-                String corpusPath = chooser.getSelectedFile().getPath();
-                chooser.setDialogTitle("Choose tagset");
+                String tagsetPath = chooser.getSelectedFile().getPath();
+                chooser.setDialogTitle("Choose simple tagset");
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 returnVal = chooser.showOpenDialog(null);
 
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
-                    String tagsetPath = chooser.getSelectedFile().getPath();
-                    chooser.setDialogTitle("Choose simple tagset");
-                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    returnVal = chooser.showOpenDialog(null);
-
-                    if(returnVal == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            String simpleTagsetPath = chooser.getSelectedFile().getPath();
-                            System.out.println(tagsetPath + simpleTagsetPath + corpusPath);
-                            Viterbi.loadCorpusForTraining(tagsetPath, simpleTagsetPath, corpusPath, "datafile.txt");
-                            v = new Viterbi(tagsetPath, simpleTagsetPath, "datafile.txt");
-                            parser = new TextParser(v);
-                            is_init = true;
-                        } catch (                IOException | WrongFormatException | POSNotFoundException ex) {
-                            JOptionPane.showMessageDialog(null, "Invalid files. Please choose again.", "Error", JOptionPane.PLAIN_MESSAGE);
-                            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                    try {
+                        String simpleTagsetPath = chooser.getSelectedFile().getPath();
+                        System.out.println(tagsetPath + simpleTagsetPath + corpusPath);
+                        Viterbi.loadCorpusForTraining(tagsetPath, simpleTagsetPath, corpusPath, "datafile.txt");
+                        v = new Viterbi(tagsetPath, simpleTagsetPath, "datafile.txt");
+                        parser = new TextParser(v);
+                    } catch (                IOException | WrongFormatException | POSNotFoundException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid files. Please choose again.", "Error", JOptionPane.PLAIN_MESSAGE);
+                        Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
