@@ -1,9 +1,11 @@
-CS 51 Final Project: Part of Speech Tagger
+CS 51 Final Project: Part-of-Speech Tagger and Highlighter
 Contributors: Billy Janitsch, Jenny Liu, Yuechen Zhao, Joy Zheng
 
------ COMPILATIONS AND RUNTIME INSTRUCTIONS -----
+----- COMPILATION AND RUNTIME INSTRUCTIONS -----
 To build code, go into highest level in repository and run:
 javac -classpath . *.java
+NOTE: Due to multi-catch exception handling, a JDK of version 7
+(i.e. 1.7) or higher is required.
 
 To execute with the GUI, run:
 java POSTaggerApp
@@ -22,12 +24,13 @@ To create a datafile from the command line, run:
 java POSTaggerApp compute <tagset location> <simple tagset location> <corpus directory> <datafile save location>
 
 ----- DEBUGGING -----
-In particular, the corpus directory may NOT contain any non-corpus files, 
-which will causes errors upon running.
+In particular, the corpus directory may NOT contain any non-corpus files. If it contains
+any files other than corpus files, you will be prompted for a new corpus directory.
 
-For Mac OS users, the Mac finder has the tendency to create a file called 
-".DS_Store" in the corpus directory, which has caused problems. If this is 
-the case, remove the file manually and try again.
+Check for hidden files in your corpus directory. To do so, add the -a flag to ls in 
+terminal. Specifically, for Mac OS users, the Mac Finder has the tendency to create a file 
+named ".DS_Store" in the corpus directory. Remove this file with terminal if this is the 
+case.
 
 ----- DEFAULT OR INCLUDED FILE NAMES (see javadoc for details) -----
 Files modified during runtime:
@@ -38,7 +41,7 @@ corpus_simple_tagset.txt : A list mapping tags in the full tagset
 
 Included default files:
 /corpus : a directory containing the Brown Corpus
-dictionary.txt : an English-language dictionary based on the one found at
-	http://www.gutenberg.org/files/29765/29765-8.txt
+webster_ dictionary.txt : an English-language dictionary based on the one 
+	found at http://www.gutenberg.org/files/29765/29765-8.txt
 thesaurus.txt: an Engligh-language thesaurus based on the one found at 
  	http://www.gutenberg.org/cache/epub/10681/pg10681.txt
